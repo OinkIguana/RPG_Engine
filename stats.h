@@ -3,32 +3,34 @@
 
 #include <string>
 #include <map>
-#include <iostream>
+#include <fstream>
 
 class Stat {
 public:
-	/*
-		Gets the pointer to the Stat with the given name. If the Stat has not yet been used, it sets the description
-	*/
-	static Stat* get(std::string, std::string = "");
-	~Stat() {}
+    /*
+        Gets the pointer to the Stat with the given name. If the Stat has not yet been used, it sets the description
+    */
+    static Stat* get(std::string, std::string = "");
+    ~Stat() {}
 
-	std::string operator|(const int) const;
+    std::string operator<<(const int) const;
+    static void import(const std::string);
 private:
-	/*
-		Use Stat::get to create/use Stats
-	*/
-	Stat(std::string, std::string);
+    /*
+        Use Stat::get to create/use Stats
+    */
+    Stat(const std::string name, const std::string desc) : _name(name), _desc(desc) {};
 
-	std::string name;
-	std::string desc;
+	const std::string _name;
+	const std::string _desc;
 
 	static std::map<std::string, Stat*> all_stats;
 };
 
 class StatList {
 public:
-	StatList() {}
+    StatList() {}
+    StatList(std::string);
 	~StatList() {}
 
 	StatList operator+(const StatList) const;
@@ -39,8 +41,10 @@ public:
 
 	operator std::string() const;
 	friend std::ostream& operator<<(std::ostream&, const StatList&);
+
+    bool read(std::string);
 private:
-	std::map<Stat*, int> stats;
+    std::map<Stat*, int> _stats;
 };
 
 #endif
