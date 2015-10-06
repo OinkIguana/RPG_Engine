@@ -8,12 +8,13 @@
 class Stat {
 public:
     /*
-        Gets the pointer to the Stat with the given name. If the Stat has not yet been used, it sets the description
-    */
-    static Stat* get(std::string, std::string = "");
-    ~Stat() {}
+		Gets the pointer to the Stat with the given name. If the Stat has not yet been used, it sets the description
+	*/
+	static Stat* get(std::string, std::string = "");
+    ~Stat() { all_stats.erase(name); }
 
-    std::string operator<<(const int) const;
+	std::string toString(const int) const;
+
     static void import(const std::string);
 private:
     /*
@@ -37,7 +38,7 @@ public:
 	StatList operator-(const StatList) const;
 	StatList operator+=(const StatList);
 	StatList operator-=(const StatList);
-	int& operator[](Stat*); 
+	int& operator[](Stat*);
 
 	operator std::string() const;
 	friend std::ostream& operator<<(std::ostream&, const StatList&);
