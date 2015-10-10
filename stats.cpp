@@ -15,7 +15,7 @@ Stat* Stat::get(std::string name, std::string desc) {
 	}
 }
 
-std::string Stat::toString(const int l) const {
+std::string Stat::to_string(const int l) const {
 	auto i = _desc.find_first_of('`');
 	return i == std::string::npos ? (_desc == "" ? _name + ": " + std::to_string(l) : _desc) : _desc.substr(0, i) + std::to_string(l) + _desc.substr(i + 1);
 }
@@ -54,14 +54,14 @@ StatList StatList::operator-(const StatList o) const {
 
 StatList StatList::operator+=(const StatList o) {
 	for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
-		(*this)[i->first] += i->second;
+		_stats[i->first] += i->second;
 	}
 	return *this;
 }
 
 StatList StatList::operator-=(const StatList o) {
 	for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
-		(*this)[i->first] -= i->second;
+        _stats[i->first] -= i->second;
 	}
 	return *this;
 }
@@ -95,16 +95,16 @@ bool StatList::read(std::string list) {
     return true;
 }
 
-StatList::operator std::string() const {
+std::string StatList::to_string() const {
 	std::string str;
-	for (auto i = stats.begin(); i != stats.end(); i++) {
-		str += i->first->toString(i->second);
+	for (auto i = _stats.begin(); i != _stats.end(); i++) {
+		str += i->first->to_string(i->second);
 		str += '\n';
 	}
 	return str;
 }
 
 std::ostream& operator<<(std::ostream& o, const StatList& s) {
-	o << (std::string) s;
+	o << s.to_string();
 	return o;
 }

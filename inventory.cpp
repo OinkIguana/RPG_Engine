@@ -1,5 +1,7 @@
 #include "inventory.h"
 
+std::map<std::string, ItemType*> ItemType::all_types;
+
 ItemType * ItemType::get(   const std::string name, const std::string desc,
                             const int buy, const int sell, const unsigned int stack,
                             const unsigned int attributes, const unsigned int kind, const unsigned int rarity,
@@ -27,6 +29,9 @@ void ItemType::import(const std::string fname) {
         if (line[0] == '[') {
             if (name != "") {
                 ItemType::get(name, desc, buy, sell, max_stack, attributes, kind, rarity, base_stats);
+                desc = "";
+                buy = 0, sell = 0, max_stack = 0, attributes = 0, kind = 0, rarity = 0;
+                base_stats -= base_stats;
             }
             name = line.substr(1, line.find(']') - 1);
             continue;
@@ -36,9 +41,9 @@ void ItemType::import(const std::string fname) {
             std::string value = line.substr(eqpos + 1);
             if (name == "") {
                 if (value[0] == '|') {
-                    constants[line.substr()] = std::stoi(value.substr(1), nullptr, 2);
+                    constants[line.substr(0, eqpos)] = std::stoi(value.substr(1), nullptr, 2);
                 } else {
-                    constants[line.substr()] = std::stoi(value);
+                    constants[line.substr(0, eqpos)] = std::stoi(value);
                 }
                 continue;
             }
@@ -61,9 +66,15 @@ void ItemType::import(const std::string fname) {
                 break;
             case 'a':
                 do {
-                    int v = constants[value.substr(0, value.find('|'))];
-                    attributes |= v;
-                } while ((value = value.substr(value.find('|') + 1)) != "");
+                    int end = value.find('|');
+                    if (end != std::string::npos) {
+                        attributes |= constants[value.substr(0, end)];
+                        value = value.substr(end + 1);
+                    } else {
+                        attributes |= constants[value];
+                        value = "";
+                    }
+                } while (value != "");
                 break;
             case 'k':
                 kind = constants[value];
@@ -74,70 +85,92 @@ void ItemType::import(const std::string fname) {
             }
         }
     } while (!file.eof());
+    if (name != "") {
+        ItemType::get(name, desc, buy, sell, max_stack, attributes, kind, rarity, base_stats);
+    }
 }
 
-ItemStack ItemStack::operator+=(ItemStack& o) {
-	if (!o) {
-        //If the stack is false, return it immediately
-        return o;
+bool ItemStack::operator+=(ItemStack& o) {
+	if (o._type == nullptr || o._length == 0 || full()) {
+        //If the stack to be added is false, or the stack added to is full, fail
+        return false;
 	}
 	if (_type == nullptr) {
         //Allow adding to false stacks
-		_type = o._type;
-		delete[] _items;
-		_items = new Item*[_type->_max_stack];
+        reset(o.type());
 	}
     if (_type == o._type) {
         //If the types are the same
-        for (int i = 0; i < o._length; i++) {
+        const unsigned int len = o._length;
+        for (unsigned int i = 0; i < len; i++) {
             //Add all the items
-            _items[_length++] = o.remove(i);
-            if (full()) {
-                //If the stack has been filled, clean and return the rest of the one being taken from
-                o.sort();
+            if (!full()) {
+                _items[_length++] = o.remove(0U);
+            } else if(min_level() < o.max_level()) {
+                _sort();
+                //Replace the lowest level item
+                Item* temp = remove(_length - 1);
+                //With the highest level item
+                _items[_length++] = o.remove(0U);
+                o << temp;
+            } else {
                 break;
             }
         }
-        sort();
-    } //Return the entire other stack if it was not addable
-	return o;
+        _sort();
+    }
+	return o._length == 0;
 }
 
-ItemStack ItemStack::operator+=(Item* o) {
-	if (!*o || o == nullptr) {
-		//If the item doesn't actually exist, return a false stack
-		return ItemStack();
-	}
-	if (!*this) {
-		//Allow adding to false stacks
-		_type = o->type();
-		delete[] _items;
-		_items = new Item*[_type->_max_stack];
-	}
-	if (o->type() != _type && _length < _type->_max_stack) {
-		//If it could be added, add it
-		_items[_length++] = o;
-		sort();
-		return ItemStack();
-	} else {
-		//If it couldn't be added, make a new stack with the one item
-		ItemStack second(o->type());
-		second += o;
-		return second;
-	}
+int ItemStack::add(ItemType* type, const unsigned int amount, const unsigned int level, const StatList stats) {
+    for (unsigned int i = 0; i < amount;  i++) {
+        if (!(*this << new Item(type, level, stats))) {
+            return amount - i;
+        }
+        if (full()) {
+            return amount - i - 1;
+        }
+    }
+    return 0;
+}
+
+bool ItemStack::operator<<(Item* o) {
+    ItemStack t(o->type());
+    t._items[t._length++] = o;
+    return (*this) += t;
+}
+
+unsigned int ItemStack::min_level() const {
+    if (_length == 0) { return 0; }
+    unsigned int level = _items[0]->level();
+    for (unsigned int i = 0; i < _length; i++) {
+        if (_items[i]->level() < level) {
+            level = _items[i]->level();
+        }
+    }
+    return level;
+}
+
+unsigned int ItemStack::max_level() const {
+    if (_length == 0) { return 0; }
+    unsigned int level = _items[0]->level();
+    for (unsigned int i = 0; i < _length; i++) {
+        if (_items[i]->level() > level) {
+            level = _items[i]->level();
+        }
+    }
+    return level;
 }
 
 Item* ItemStack::remove(Item* o) {
-	for (int i = 0; i < _length; i++) {
+	for (unsigned int i = 0; i < _length; i++) {
 		if (_items[i] == o) {
 			_items[i] = nullptr;
 			_length--;
             if (_length) {
-                sort();
+                _sort();
             } else {
-                //Delete the pointers to the pointers to the Items (not the Items)
                 _type = nullptr;
-                delete[] _items;
             }
 			return o;
 		}
@@ -153,42 +186,52 @@ Item* ItemStack::remove(unsigned int i) {
 		_items[i] = nullptr;
 		_length--;
 		if (_length) {
-            sort();
+            _sort();
 		} else {
-            //Delete the pointers to the pointers to the Items (not the Items)
             _type = nullptr;
-            delete[] _items;
 		}
 	}
 	return temp;
 }
 
-ItemStack ItemStack::slice(const int start, const int length) const {
-	ItemStack part(_type);
-	for (unsigned int i = 0; i < length; i++) {
-		if (start + i >= _length) {
-			break;
-		}
-		part += _items[start + i];
-	}
-	return part;
+std::ostream& operator<<(std::ostream& out, const Item& i) {
+    out << i.type()->name() << " Lv. " << i._level << " : " << i.type()->desc();
+    return out;
 }
 
+void ItemStack::reset(ItemType * t) {
+    delete[] _items;
+    _type = t;
+    const unsigned int len = (_type == nullptr ? 1 : _type->max_stack());
+    _items = new Item*[len];
+    for (unsigned int i = 0; i < len; i++) {
+        _items[i] = nullptr;
+    }
+}
 
-ItemStack ItemStack::splice(const int start, const int length) {
+ItemStack ItemStack::splice(const unsigned int start, const unsigned int length) {
 	ItemStack part(_type);
 	for (unsigned int i = 0; i < length; i++) {
 		if (start >= _length) {
 			break;
 		}
-		part += remove(start);
+		part << remove(start);
 	}
 	return part;
 }
 
+std::ostream& operator<<(std::ostream& out, const ItemStack& stack) {
+    for (unsigned int i = 0; i < stack._length; i++) {
+        if (stack[i] != nullptr) {
+            out << *stack[i] << '\n';
+        }
+    }
+    return out;
+}
+
 int Inventory::count(ItemType * t) const {
     int c = 0;
-    for (int i = 0; i < _length; i++) {
+    for (unsigned int i = 0; i < _length; i++) {
         if (_slots[i].type() == t) {
             c++;
         }
@@ -197,15 +240,16 @@ int Inventory::count(ItemType * t) const {
 }
 
 int Inventory::count_individual(ItemType* t) const {
-    int i = 0, c = 0;
-    while ((i = find(t, i + 1)) != _length) {
+    unsigned int i = 0, c = 0;
+    while ((i = find(t, i)) != _length) {
         c += _slots[i].length();
+        i++;
     }
-    return 0;
+    return c;
 }
 
 int Inventory::find(ItemType* t, const int start) const {
-    for (int i = start; i < _length; i++) {
+    for (unsigned int i = start; i < _length; i++) {
         if (_slots[i].type() == t) {
             return i;
         }
@@ -222,16 +266,110 @@ int Inventory::r_find(ItemType * t, const int start) const {
     return _length;
 }
 
-inline void Inventory::merge() {
-    for (int i = 0; i < _length; i++) {
-        if (_slots[i]) {
+void Inventory::merge() {
+    for (unsigned int i = 0; i < _length; i++) {
+        if (_slots[i].type() != nullptr) {
             int j = i;
-            while ((j = find(_slots[i].type()), j + 1) != _length) {
+            while ((j = find(_slots[i].type(), j + 1)) != _length) {
                 _slots[i] += _slots[j];
-                if(_slots[i].full()) {
-                    break;
-                }
             }
         }
     }
+}
+
+int Inventory::add(ItemType* t, const unsigned int amount, const unsigned int level, const StatList stats) {
+    unsigned int a = amount, i = 0;
+    while ((a = _slots[i++].add(t, a, level, stats)) && i < _length);
+    return a;
+}
+
+Inventory &Inventory::operator<<(Item * o) {
+    if (o == nullptr || o->type() == nullptr) {
+        return *this;
+    }
+    for (unsigned int i = 0; i < _length; i++) {
+        if (_slots[i].type() == o->type()) {
+            if (_slots[i] << o) {
+                return *this;
+            }
+        }
+    }
+    for (unsigned int i = 0; i < _length; i++) {
+        if (_slots[i].type() == nullptr) {
+            _slots[i] << o;
+            break;
+        }
+    }
+    return *this;
+}
+
+Inventory &Inventory::operator<<(ItemStack& o) {
+    if (o.type() == nullptr) {
+        return *this;
+    }
+    for (unsigned int i = 0; i < _length; i++) {
+        if (_slots[i].type() == o.type()) {
+            if (_slots[i] += o) {
+                continue;
+            }
+            return *this;
+        }
+    }
+    for (unsigned int i = 0; i < _length; i++) {
+        if (_slots[i].type() == nullptr) {
+            _slots[i] += o;
+            break;
+        }
+    }
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream& out, const Inventory& inv) {
+    for (unsigned int i = 0; i < inv._length; i++) {
+        out << inv[i] << "------------------\n";
+    }
+    return out;
+}
+
+void Inventory::InventorySorter::_sort(SortFunction ok) {
+    inv->merge();
+    //Make a list of locations
+    unsigned int * locations = new unsigned int[inv->_length];
+    for (unsigned int i = 0; i < inv->_length; i++) {
+        locations[i] = i;
+    }
+    {   //Sort list of locations by the contents
+        std::function<void(unsigned int[], const unsigned int)> qs;
+        (qs = [&qs, &ok, this](unsigned int part[], const unsigned int len) -> void {
+            unsigned int * left = new unsigned int[len - 1];
+            unsigned int * right = new unsigned int[len - 1];
+            unsigned int il = 0, ir = 0;
+            const unsigned int pivot = part[len - 1];
+            for (unsigned int i = 0; i < len - 1; i++) {
+                if (ok(inv->_slots + part[i], inv->_slots + pivot)) {
+                    left[il++] = part[i];
+                } else {
+                    right[ir++] = part[i];
+                }
+            }
+            if (il > 1) { qs(left, il); }
+            if (ir > 1) { qs(right, ir); }
+            for (unsigned int i = 0; i < len; i++) {
+                if (i < il) {
+                    part[i] = left[i];
+                } else if (i == il) {
+                    part[i] = pivot;
+                } else {
+                    part[i] = right[i - il - 1];
+                }
+            }
+        })(locations, inv->_length);
+    }
+    //Reorder real list's contents in the order of the locations
+    ItemStack* oldSlots = inv->_slots;
+    inv->_slots = new ItemStack[inv->_length];
+    for (int i = 0; i < inv->_length; i++) {
+        inv->_slots[i] += oldSlots[locations[i]];
+    }
+    delete[] oldSlots;
 }

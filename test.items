@@ -1,0 +1,45 @@
+CONSUMABLE=|1
+REUSABLE=|10
+NONSELLABLE=|100
+EQUIPPABLE=|1000
+
+NONE=0
+FOOD=1
+WEAPON=2
+ARMOUR=3
+KEY=4
+
+[Apple]
+desc=A delicious apple
+buy=10
+sell=5
+max_stack=15
+attributes=CONSUMABLE
+kind=FOOD
+stats=HP+:10
+
+[Sword]
+desc=A sword for cutting things
+buy=30
+sell=15
+max_stack=1
+attributes=REUSABLE|EQUIPPABLE
+kind=WEAPON
+stats=Level:1,MinDamage:5,MaxDamage:10
+
+[Map]
+desc=A map of the country
+buy=100
+max_stack=1
+attributes=REUSABLE|NONSELLABLE
+kind=KEY
+rarity=2
+
+[Shield]
+desc=A shield to defend you
+buy=30
+sell=15
+max_stack=1
+attributes=REUSABLE|EQUIPPABLE
+kind=ARMOUR
+stats=Level:1,Defense:4

@@ -11,11 +11,12 @@ public:
 		Gets the pointer to the Stat with the given name. If the Stat has not yet been used, it sets the description
 	*/
 	static Stat* get(std::string, std::string = "");
-    ~Stat() { all_stats.erase(name); }
+    ~Stat() { all_stats.erase(_name); }
 
-	std::string toString(const int) const;
-
+	std::string to_string(const int) const;
+    
     static void import(const std::string);
+    inline static void delete_all() { all_stats.clear(); }
 private:
     /*
         Use Stat::get to create/use Stats
@@ -40,7 +41,7 @@ public:
 	StatList operator-=(const StatList);
 	int& operator[](Stat*);
 
-	operator std::string() const;
+    std::string to_string() const;
 	friend std::ostream& operator<<(std::ostream&, const StatList&);
 
     bool read(std::string);

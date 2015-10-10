@@ -1,3 +1,4 @@
-Health:Allows you to take ` points of damage before dying
-Defense:Reduces damage taken by `%
-Bow:Increases damage with bows by `
+HP+:Restores ` health
+MinDamage:The minimum damage this weapon will deal
+MaxDamage:The maximum damage this weapon will deal
+Level:This weapon requires level ` to wield
