@@ -1,55 +1,49 @@
-// #include "engine.h"
-
-#include "inventory.h"
 #include <iostream>
+#include "engine.h"
+#include "stats.h"
+#include "inventory.h"
+#include "dialog.h"
 
-int main(int argc, const char *argv[]) {
-    Stat::import("test.stats");
-    ItemType::import("test.items");
+void game();
 
-    ItemType* apple = ItemType::get("Apple");
-    
-    std::cout << apple->base_stats() << std::endl;
+int main(int argc, char* argv[]) {
+    //Initialize SDL 
+    SDL_Init(SDL_INIT_EVERYTHING);
 
-    Item* ap = new Item(apple);
-    ap->level_up()->upgrade(StatList("HP+:3"));
+    //Run the game until error or quit
+    game();
 
-    std::cout << *ap << std::endl;
-    std::cout << ap->total_stats() << std::endl;
-
-    Inventory a(15);
-
-    ItemStack s;
-    s << new Item(apple);
-    a << s;
-    a << new Item(apple);
-    
-    ItemStack t;
-    t << ap;
-    t.add(apple, 5, 4, StatList("HP+:30"));
-    a[1] += t;
-    a[1].add(apple, 2, 3);
-    a[1].remove(ap);
-    a[1].remove(3);
-
-    a.add(ItemType::get("Sword"), 3);
-    a[6].add(apple, 15, 9);
-
-    a.merge();
-
-    {
-        Item* sh = new Item(ItemType::get("Shield"));
-        a << sh;
-    }
-
-    a << new Item(ItemType::get("Map"));
-    a[8] += a[0];
-
-    a.sort.kind(3);
-
-    std::cout << a << std::endl;
-
-	system("PAUSE");
+    //Quit SDL 
+    SDL_Quit();
 
 	return 0;
+}
+
+void game() {
+    //Open the game window
+    SDL_Window* game_window = SDL_CreateWindow("Untitled RPG", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 756, SDL_WINDOW_SHOWN);
+    if (game_window == NULL) {
+        return;
+    }
+    SDL_Surface* game_surface = SDL_GetWindowSurface(game_window);
+
+    //Import resources
+    Font::import("test.fonts");
+    Stat::import("test.stats");
+    ItemType::import("test.items");
+    FormatString::import("test.format");
+    Dialog::import("main.dialog");
+    
+    //Do some stuff
+    FormatString str =  "Hello #gworld,``` how are you today %"_format;
+ 
+    Message msg =       "Cameron %\%"_speaker +
+                        "Hello there\~ How are #gyou?"_message;
+
+    Message msg2 = Message("Pearl", "Hello! I am #rgood\~ How about you?");
+    std::cout << str.to_string() << "\n";
+
+    std::cout << msg.to_string() << "\n";
+
+    std::cout << msg2.to_string() << "\n";
 }

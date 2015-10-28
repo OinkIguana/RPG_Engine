@@ -1,13 +1,12 @@
 #ifndef __RPG_INVENTORY_H__
 #define __RPG_INVENTORY_H__
 
-#include "stats.h"
-#include <string>
 #include <map>
+#include <string>
+#include <fstream>
 #include <algorithm>
 #include <functional>
-#include <fstream>
-#include <iostream> 
+#include "stats.h"
 
 const unsigned int DEFAULT_MAX_STACK = 99;
 
@@ -84,7 +83,7 @@ public:
 	Item(ItemType* type = nullptr, int level = 1, StatList stats = StatList()) : _type(type), _level(level), _stats(stats) {}
 	~Item() {}
 
-	inline int level()                              { return _level; }
+	inline unsigned int level()                     { return _level; }
 	inline Item* upgrade(StatList c = StatList())   { return _stats += c, this; }
 	inline Item* level_up()                         { return ++_level, this; }
 
@@ -96,9 +95,9 @@ public:
 
     friend std::ostream& operator<<(std::ostream&, const Item&);
 private:
-	ItemType*   _type;
-	int         _level;
-	StatList    _stats;
+	ItemType*       _type;
+	unsigned int    _level;
+	StatList        _stats;
 };
 
 class ItemStack {

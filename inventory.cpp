@@ -368,7 +368,7 @@ void Inventory::InventorySorter::_sort(SortFunction ok) {
     //Reorder real list's contents in the order of the locations
     ItemStack* oldSlots = inv->_slots;
     inv->_slots = new ItemStack[inv->_length];
-    for (int i = 0; i < inv->_length; i++) {
+    for (unsigned int i = 0; i < inv->_length; i++) {
         inv->_slots[i] += oldSlots[locations[i]];
     }
     delete[] oldSlots;

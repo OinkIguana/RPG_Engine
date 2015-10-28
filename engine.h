@@ -1,8 +1,7 @@
 #ifndef __RPG_ENGINE_H__
 #define __RPG_ENGINE_H__
 
-#include "sprite.h"
-#include <SDL.h>
+#include <sdl.h>
 
 class Engine {
 public:

@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include <fstream>
+#include "types.h"
 
 class Stat {
 public:
@@ -24,7 +25,7 @@ private:
     Stat(const std::string name, const std::string desc) : _name(name), _desc(desc) {};
 
 	const std::string _name;
-	const std::string _desc;
+	const FormatString _desc;
 
 	static std::map<std::string, Stat*> all_stats;
 };

@@ -3,7 +3,6 @@
 
 #include "types.h"
 #include "tile.h"
-#include <sdl.h>
 
 class Background {
 public:

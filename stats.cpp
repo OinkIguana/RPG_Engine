@@ -16,8 +16,8 @@ Stat* Stat::get(std::string name, std::string desc) {
 }
 
 std::string Stat::to_string(const int l) const {
-	auto i = _desc.find_first_of('`');
-	return i == std::string::npos ? (_desc == "" ? _name + ": " + std::to_string(l) : _desc) : _desc.substr(0, i) + std::to_string(l) + _desc.substr(i + 1);
+    std::string desc = (std::string) (_desc << l);
+    return _name + ": " + (desc == "" ? std::to_string(l) : desc);
 }
 
 void Stat::import(const std::string fname) {

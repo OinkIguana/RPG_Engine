@@ -213,3 +213,118 @@ Rectf::operator Point() const {
 Rectf::operator Pointf() const {
 	return Pointf(x, y);
 }
+
+std::map<char, unsigned int> FormatString::_color_map;
+std::map<char, Font*> FormatString::_font_map;
+
+FormatString::FormatString(std::string raw) : _raw(raw) {
+    std::function<void(const unsigned int, const unsigned int)> next;
+    (next = [&next, this] (const unsigned int start, const unsigned int iteration) {
+        FormatString::_Piece piece;
+
+        bool escape = false, color = false, font = false;
+        unsigned int i = start, delay = 0;
+
+        for (i; i < _raw.length(); i++) {
+            //Font and color can be set if no text has been collected yet
+            if (color) {
+                auto found = _color_map.find(_raw[i]);
+                piece.color = (found != _color_map.end() ? found->second : 0x000000);
+                color = false;
+                continue;
+            }
+            if (font) {
+                auto found = _font_map.find(_raw[i]);
+                piece.font = (found != _font_map.end() ? found->second : Font::get());
+                font = false;
+                continue;
+            }
+
+            //Escaped things
+            if (escape) {
+                _text += _raw[i];
+                escape = false;
+                continue;
+            }
+
+            //Catch special characters
+            switch (_raw[i]) {
+            case '\\':
+                escape = true; 
+                break;
+            case FormatString::SYM::VAR: /* skip var char */ break;
+            case FormatString::SYM::WAIT:
+                if (piece.text.length() == 0) {
+                    piece.delay++;
+                } else {
+                    goto out;
+                }
+                break;
+            case FormatString::SYM::COLOR:
+                if (piece.text.length() == 0) {
+                    color = true;
+                } else {
+                    goto out;
+                }
+                break;
+            case FormatString::SYM::FONT:
+                if (piece.text.length() == 0) {
+                    font = true;
+                } else {
+                    goto out;
+                }
+                break;
+            default: //Regular characters
+                _text += _raw[i];
+                piece.text += _raw[i];
+            }
+        }
+    out:
+        if (i != _raw.length()) {
+            next(i, iteration + 1);
+        } else {
+            _pieces = new FormatString::_Piece[iteration + 1];
+        }
+        
+        _pieces[iteration] = piece;
+    })(0, 0);
+}
+
+void FormatString::draw() const {
+    //DRAW!!
+}
+
+FormatString FormatString::operator<<(const int v) const {
+    auto i = _raw.find_first_of(SYM::VAR);
+    if(i == std::string::npos) {
+        return *this;
+    } else {
+        return FormatString(_raw.substr(0, i) + std::to_string(v) + _raw.substr(i + 1));
+    }
+}
+
+FormatString FormatString::operator<<(const std::string v) const {
+    auto i = _raw.find_first_of(SYM::VAR);
+    if (i == std::string::npos) {
+        return *this;
+    } else {
+        return FormatString(_raw.substr(0, i) + v + _raw.substr(i + 1));
+    }
+}
+
+void FormatString::import(const std::string path) {
+    std::ifstream file(path);
+    while (!file.eof()) {
+        char t, s;
+        file >> t;
+        if (t == 'c') {
+            int v;
+            file >> s >> v;
+            add_color(s, v);
+        } else if(t == 'f') {
+            std::string v;
+            file >> s >> v;
+            add_font(s, Font::get(v));
+        }
+    }
+}
