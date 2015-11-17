@@ -1,5 +1,4 @@
-#ifndef __RPG_SPRITE_H
-#define __RPG_SPRITE_H
+#pragma once
 
 #include <map>
 #include <string>
@@ -8,19 +7,17 @@
 
 class Sprite {
 public:
-    static Sprite* get(std::string) { return new Sprite(); }
+    static Sprite* get(const std::string&, Image* = NULL) { return new Sprite("default", Image::get("default")); };
 
-	~Sprite() {}
+    ~Sprite() {}
 private:
-    Sprite() {}
+    Sprite(const std::string&, Image* i) : _image(i) {}
 
-    std::string name;
-	Image image;
-	Point origin;
-	Rect* frames;
-	Rect stretch;
+    std::string _name;
+    Image* _image;
+    Point _origin;
+    Rect* _frames;
+    Rect _stretch;
 
     static const std::map<std::string, Sprite*> all_sprites;
 };
-
-#endif

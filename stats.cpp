@@ -9,10 +9,10 @@ Stat* Stat::get(std::string name, std::string desc) {
     auto old = all_stats.find(name);
     if(old != all_stats.end()) {
         return old->second;
-	} else {
+    } else {
         all_stats[name] = new Stat(name, desc);
         return all_stats[name];
-	}
+    }
 }
 
 std::string Stat::to_string(const int l) const {
@@ -31,50 +31,50 @@ void Stat::import(const std::string fname) {
 }
 
 StatList StatList::operator+(const StatList o) const {
-	StatList both;
-	for (auto i = _stats.begin(); i != _stats.end(); ++i) {
-		both[i->first] = i->second;
-	}
-	for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
-		both[i->first] += i->second;
-	}
-	return both;
+    StatList both;
+    for (auto i = _stats.begin(); i != _stats.end(); ++i) {
+        both[i->first] = i->second;
+    }
+    for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
+        both[i->first] += i->second;
+    }
+    return both;
 }
 
 StatList StatList::operator-(const StatList o) const {
-	StatList both;
-	for (auto i = _stats.begin(); i != _stats.end(); ++i) {
-		both[i->first] = i->second;
-	}
-	for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
-		both[i->first] -= i->second;
-	}
-	return both;
+    StatList both;
+    for (auto i = _stats.begin(); i != _stats.end(); ++i) {
+        both[i->first] = i->second;
+    }
+    for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
+        both[i->first] -= i->second;
+    }
+    return both;
 }
 
 StatList StatList::operator+=(const StatList o) {
-	for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
-		_stats[i->first] += i->second;
-	}
-	return *this;
+    for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
+        _stats[i->first] += i->second;
+    }
+    return *this;
 }
 
 StatList StatList::operator-=(const StatList o) {
-	for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
+    for (auto i = o._stats.begin(); i != o._stats.end(); ++i) {
         _stats[i->first] -= i->second;
-	}
-	return *this;
+    }
+    return *this;
 }
 
 int& StatList::operator[](Stat* i) {
-	auto old = _stats.find(i);
-	if (old == _stats.end()) {
-		_stats[i] = 0;
-		return _stats[i];
-	}
-	else {
-		return old->second;
-	}
+    auto old = _stats.find(i);
+    if (old == _stats.end()) {
+        _stats[i] = 0;
+        return _stats[i];
+    }
+    else {
+        return old->second;
+    }
 }
 
 bool StatList::read(std::string list) {
@@ -96,15 +96,15 @@ bool StatList::read(std::string list) {
 }
 
 std::string StatList::to_string() const {
-	std::string str;
-	for (auto i = _stats.begin(); i != _stats.end(); i++) {
-		str += i->first->to_string(i->second);
-		str += '\n';
-	}
-	return str;
+    std::string str;
+    for (auto i = _stats.begin(); i != _stats.end(); i++) {
+        str += i->first->to_string(i->second);
+        str += '\n';
+    }
+    return str;
 }
 
 std::ostream& operator<<(std::ostream& o, const StatList& s) {
-	o << s.to_string();
-	return o;
+    o << s.to_string();
+    return o;
 }

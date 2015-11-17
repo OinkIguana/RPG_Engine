@@ -1,16 +1,13 @@
-#ifndef __RPG_BACKGROUND_H__
-#define __RPG_BACKGROUND_H__
+#pragma once
 
 #include "types.h"
 #include "tile.h"
 
 class Background {
 public:
-	Background() {}
-	~Background() {}
+    Background() {}
+    ~Background() {}
 private:
-	int layer;
-	Rect pos;
+    int layer;
+    Rect pos;
 };
-
-#endif

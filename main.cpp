@@ -1,49 +1,69 @@
 #include <iostream>
-#include "engine.h"
-#include "stats.h"
-#include "inventory.h"
-#include "dialog.h"
+#include "rpg.h"
+
+#include "player.h"
+#include "npc.h"
 
 void game();
+void ev_step();
+void ev_draw();
 
 int main(int argc, char* argv[]) {
     //Initialize SDL 
-    SDL_Init(SDL_INIT_EVERYTHING);
+    if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+        std::cout << "SDL_Init: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+    if (TTF_Init() != 0) {
+        std::cout << "TTF_Init: " << TTF_GetError() << std::endl;
+        SDL_Quit();
+        return 2;
+    }
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        std::cout << "IMG_Init: " << IMG_GetError() << std::endl;
+        SDL_Quit();
+        return 3;
+    }
 
     //Run the game until error or quit
     game();
 
-    //Quit SDL 
+    //Quit SDL
+    IMG_Quit();
+    TTF_Quit();
     SDL_Quit();
 
-	return 0;
+    return 0;
 }
 
 void game() {
     //Open the game window
-    SDL_Window* game_window = SDL_CreateWindow("Untitled RPG", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1024, 756, SDL_WINDOW_SHOWN);
-    if (game_window == NULL) {
-        return;
-    }
-    SDL_Surface* game_surface = SDL_GetWindowSurface(game_window);
+    RPG::init();
 
     //Import resources
     Font::import("test.fonts");
+    Image::import("test.image");
     Stat::import("test.stats");
     ItemType::import("test.items");
     FormatString::import("test.format");
     Dialog::import("main.dialog");
-    
-    //Do some stuff
-    FormatString str =  "Hello #gworld,``` how are you today %"_format;
- 
-    Message msg =       "Cameron %\%"_speaker +
-                        "Hello there\~ How are #gyou?"_message;
 
-    Message msg2 = Message("Pearl", "Hello! I am #rgood\~ How about you?");
-    std::cout << str.to_string() << "\n";
+    //Do the game stuff
+    while (!RPG::is_done()) {
+        RPG::process_events();
+        ev_step();
+        draw::clear();
+        ev_draw();
+        draw::render();
+    }
 
-    std::cout << msg.to_string() << "\n";
+    RPG::exit();
+}
 
-    std::cout << msg2.to_string() << "\n";
+//Things to run once per frame
+void ev_step() {}
+
+//Redraw the screen
+void ev_draw() {
+    Image::get("green_bag")->draw({ 0, 25 });
 }

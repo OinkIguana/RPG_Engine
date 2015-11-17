@@ -1,18 +1,15 @@
-#ifndef __RPG_TILE_H__
-#define __RPG_TILE_H__
+#pragma once
 
 #include "types.h"
 #include "image.h"
 
 class Tile {
 public:
-	Tile() {}
-	~Tile() {}
+    Tile() {}
+    ~Tile() {}
 private:
-	Point pos;
-	Image image;
-	Rect piece;
-	int layer;
+    Point pos;
+    Image image;
+    Rect piece;
+    int layer;
 };
-
-#endif

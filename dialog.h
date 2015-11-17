@@ -1,8 +1,7 @@
-#ifndef __RPG_DIALOG_H__
-#define __RPG_DIALOG_H__
+#pragma once
 
 #include <string>
-#include "types.h"
+#include "formatstring.h"
 #include "sprite.h"
 
 class Message {
@@ -11,11 +10,12 @@ public:
         _speaker(FormatString(speaker)), _message(FormatString(message)), _sprites{ lsprite, rsprite } {}
     Message(FormatString speaker = ""_format, FormatString message = ""_format, Sprite* lsprite = nullptr, Sprite* rsprite = nullptr) :
         _speaker(speaker), _message(message), _sprites{ lsprite, rsprite } {}
+
 	~Message() {}
 
     Message operator+(const Message&) const;
     std::string to_string() const { return _speaker.to_string() + ": " + _message.to_string(); }
-    FormatString next();
+    FormatString next() {};
 private:
 	const FormatString _speaker;
 	const FormatString _message;
@@ -41,5 +41,3 @@ Message operator""_speaker(const char*, size_t);
 Message operator""_message(const char*, size_t);
 Message operator""_lsprite(const char*, size_t);
 Message operator""_rsprite(const char*, size_t);
-
-#endif
