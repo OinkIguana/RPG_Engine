@@ -51,16 +51,15 @@ void Image::import(const std::string& path) {
 Image::Image(const std::string& name, const std::string& file) : _name(name), _file("resource/image/" + file) {
     SDL_Surface* surf = IMG_Load(_file.c_str());
     if (surf == NULL) {
-        std::cout << "1: " << SDL_GetError() << std::endl;
         throw 1;
     }
+    _width = surf->w;
+    _height = surf->h;
     _tex = SDL_CreateTextureFromSurface(RPG::game_renderer(), surf);
     if (_tex == NULL) {
-        std::cout << "2: " << SDL_GetError() << std::endl;
         throw 2;
     }
     SDL_FreeSurface(surf);
-    std::cout << _tex << std::endl;
 }
 
 Image::~Image() {

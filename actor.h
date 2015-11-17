@@ -1,6 +1,7 @@
 #pragma once
 
 #include "types.h"
+#include "sprite.h"
 
 class Actor {
 public:
@@ -15,8 +16,10 @@ public:
     virtual void key_up(SDL_KeyboardEvent) {};
     virtual void key(SDL_KeyboardEvent) {};
 
-private:
+protected:
     const unsigned int _id;
+    Sprite* _sprite;
+    unsigned int _frame;
     Pointf _pos;
     Rectf _bbox;
     int _depth;

@@ -42,11 +42,12 @@ void game() {
 
     //Import resources
     Font::import("test.fonts");
-    Image::import("test.image");
-    Stat::import("test.stats");
-    ItemType::import("test.items");
     FormatString::import("test.format");
+    Image::import("test.image");
+    Sprite::import("test.sprite");
+    ItemType::import("test.items");
     Dialog::import("main.dialog");
+    Stat::import("test.stats");
 
     //Do the game stuff
     while (!RPG::is_done()) {
@@ -64,6 +65,4 @@ void game() {
 void ev_step() {}
 
 //Redraw the screen
-void ev_draw() {
-    Image::get("green_bag")->draw({ 0, 25 });
-}
+void ev_draw() {}

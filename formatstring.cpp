@@ -15,7 +15,7 @@ FormatString::FormatString(const std::string& raw, const int& width) : _raw(raw)
     unsigned int max_width = 0;
     unsigned int chunk_start = 0;
     std::string prev_chunk = "";
-    (next = [&next, &font_prev, &col_prev, &line_y, &line_x, &max_width, &chunk_start, &prev_chunk, this](const unsigned int start, const unsigned int iteration) {
+    (next = [&] (const unsigned int start, const unsigned int iteration) {
         FormatString::_Piece piece;
         piece.color = col_prev;
         piece.font = font_prev;
