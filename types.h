@@ -158,10 +158,10 @@ struct Rectf {
     Rectf operator=(const Rectf);
     bool operator==(const Rectf) const;
 
-    operator SDL_Rect() const;
-    operator Rect() const;
-    operator Point() const;
-    operator Pointf() const;
+    inline operator SDL_Rect() const;
+    inline operator Rect() const;
+    inline operator Point() const;
+    inline operator Pointf() const;
 };
 
 // Provides convenient conversion between various color formats

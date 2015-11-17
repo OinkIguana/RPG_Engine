@@ -49,6 +49,8 @@ void game() {
     Dialog::import("main.dialog");
     Stat::import("test.stats");
 
+    Actor::create<Player>();
+
     //Do the game stuff
     while (!RPG::is_done()) {
         RPG::process_events();
@@ -62,7 +64,11 @@ void game() {
 }
 
 //Things to run once per frame
-void ev_step() {}
+void ev_step() {
+    RPG::step();
+}
 
 //Redraw the screen
-void ev_draw() {}
+void ev_draw() {
+    RPG::draw();
+}

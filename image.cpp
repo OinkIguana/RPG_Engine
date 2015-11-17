@@ -27,13 +27,8 @@ void Image::import(const std::string& path) {
     while (!file.eof()) {
         std::string name, url;
         std::string seg;
+        file >> name;
         file >> seg;
-        do {
-            if (name != "") { name += " "; }
-            name += seg;
-            file >> seg;
-            // Go until the path is found
-        } while (seg.front() != '"');
         seg.erase(0, 1); // Remove "
         while (seg.back() != '"') {
             //Go until the path ends

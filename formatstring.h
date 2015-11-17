@@ -15,7 +15,7 @@ public:
     ~FormatString();
 
     //Draw the string (formatted) to the screen
-    void draw(const Point&);
+    void draw(const Point& pos);
 
     //Get the text only part of the string
     inline operator std::string() const { return _text; }
@@ -26,8 +26,9 @@ public:
     inline int height() const { return _height; }
 
     //Replace the first SYM::VAR with the given value
-    FormatString operator<<(const int&) const;
-    FormatString operator<<(const std::string&) const;
+    FormatString operator<<(const int& v) const;
+    //Replace the first SYM::VAR with the given value
+    FormatString operator<<(const std::string& v) const;
 
     //Compare two FormatStrings, based on their raw strings
     inline bool operator==(const FormatString& o) const { return _raw == o._raw; }
@@ -46,10 +47,11 @@ public:
     inline static void add_color(const char key, unsigned const int value) { _color_map[key] = value; }
     //Add a font to the valid characters to come after SYM::FONT
     inline static void add_font(const char key, Font* value) { _font_map[key] = value; }
-    /*
-    Import many colors/fonts from a file, in the form of:
-    c k 0x000000
-    f a Arial
+    /* Import many colors/fonts from a file, in the form of:
+    *  ==============
+    *  c k 0x000000
+    *  f a arial
+    *  ==============
     */
     static void import(const std::string);
 private:

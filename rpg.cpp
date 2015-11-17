@@ -32,3 +32,18 @@ void RPG::process_events() {
         }
     }
 }
+
+void RPG::step() {
+    unsigned int count;
+    Actor** all = Actor::all<Actor>(&count);
+    for (unsigned int i = 0; i < count; i++) {
+        all[i]->step();
+    }
+}
+void RPG::draw() {
+    unsigned int count;
+    Actor** all = Actor::all<Actor>(&count);
+    for (unsigned int i = 0; i < count; i++) {
+        all[i]->draw();
+    }
+}

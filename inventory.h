@@ -19,9 +19,9 @@ public:
 
         Name, Desc, Buy, Sell, Max stack, Attributes, Kind, Rarity Stats
     */
-    static ItemType* get(   const std::string, const std::string = "",
-                            const int = 0, const int = 0, const unsigned int = DEFAULT_MAX_STACK,
-                            const unsigned int = 0, const unsigned int = 0, const unsigned int = 0,
+    static ItemType* get(   const std::string name, const std::string desc = "",
+                            const int buy = 0, const int sell = 0, const unsigned int stack = DEFAULT_MAX_STACK,
+                            const unsigned int attr = 0, const unsigned int kind = 0, const unsigned int rarity = 0,
                             const StatList base_stats = StatList());
     inline ~ItemType() { all_types.erase(_name); }
     /*
@@ -47,6 +47,7 @@ public:
         Omitting an option sets it to default
     */
     static void import(const std::string);
+    // Delete all types from the list
     inline static void delete_all() { all_types.clear(); }
 
     inline std::string name() const         { return _name; }
@@ -59,6 +60,7 @@ public:
     inline int rarity() const               { return _rarity; }
     inline StatList base_stats() const      { return _base_stats; }
 private:
+    // Create the new ItemType
     ItemType(   const std::string name, const std::string desc = "",
                 const int buy = 0, const int sell = 0, const unsigned int max_stack = DEFAULT_MAX_STACK,
                 const unsigned int attributes = 0, const unsigned int kind = 0, const unsigned int rarity = 0,
@@ -79,11 +81,15 @@ private:
 
 class Item {
 public:
+    // Create a new Item
     Item(ItemType* type = nullptr, int level = 1, StatList stats = StatList()) : _type(type), _level(level), _stats(stats) {}
     ~Item() {}
 
+    // Get this item's level
     inline unsigned int level()                     { return _level; }
-    inline Item* upgrade(StatList c = StatList())   { return _stats += c, this; }
+    // Improve the stats of the item by bonus
+    inline Item* upgrade(StatList bonus = StatList())   { return _stats += bonus, this; }
+    // Increase the level of the item
     inline Item* level_up()                         { return ++_level, this; }
 
     inline StatList base_stats()    { return _type->base_stats(); }
@@ -92,7 +98,7 @@ public:
 
     inline ItemType* type() const   { return _type; }
 
-    friend std::ostream& operator<<(std::ostream&, const Item&);
+    friend std::ostream& operator<<(std::ostream& out, const Item& item);
 private:
     ItemType*       _type;
     unsigned int    _level;
@@ -101,9 +107,11 @@ private:
 
 class ItemStack {
 public:
+    // Create a new ItemStack
     ItemStack(ItemType* type = nullptr);
     ~ItemStack();
-    void reset(ItemType*);
+    // Reset this stack, and change it's type to t
+    void reset(ItemType* t);
 
     inline ItemType* type() const       { return _type; }
     inline unsigned int length() const  { return _length; }
@@ -120,19 +128,19 @@ public:
         Removes the given Item from the stack.
         Returns the Item removed, or nullptr if the item was not found
     */
-    Item* remove(Item*);
+    Item* remove(Item* item);
 
     /*
         Removes the Item at the given index in the stack.
         Returns the Item removed, or nullptr if the item was not found.
     */
-    Item* remove(const unsigned int);
+    Item* remove(const unsigned int index);
 
     /*
         Removes a substack of the ItemStack.
         Returns the removed substack as a new ItemStack.
     */
-    ItemStack splice(const unsigned int, const unsigned int);
+    ItemStack splice(const unsigned int start, const unsigned int length);
 
     /*
         Merges the contents of two ItemStacks, emptying the second
@@ -149,11 +157,11 @@ public:
         Adds an Item or multiple items to the ItemStack, with the given level and stats.
         Returns the number of items that weren't added
     */
-    int add(ItemType*, const unsigned int = 1, const unsigned int = 1, const StatList = StatList());
+    int add(ItemType* type, const unsigned int amount = 1, const unsigned int level = 1, const StatList stats = StatList());
 
     inline Item* operator[](const unsigned int i) const { return i < _length ? _items[i] : nullptr; }
 
-    friend std::ostream& operator<<(std::ostream&, const ItemStack&);
+    friend std::ostream& operator<<(std::ostream& out, const ItemStack& stack);
 private:
     ItemType*   _type;
     Item* *     _items;
@@ -166,14 +174,19 @@ private:
 
 class Inventory {
 public:
+    // Create a new Inventory with the given number of slots
     Inventory(int slot_count) : _length(slot_count), _slots(new ItemStack[slot_count]) { sort.inv = this; }
     ~Inventory() { delete[] _slots; }
 
-    int count(ItemType*) const;
-    int count_individual(ItemType*) const;
+    // Get the total number of stacks with the given type in the inventory
+    int count(ItemType* type) const;
+    // Get the total number of items in all stacks in the inventory with the given type
+    int count_individual(ItemType* type) const;
 
-    int find(ItemType*, const int = 0) const;
-    int r_find(ItemType*, const int = 0) const;
+    // Find the first stack of the given type (going forward from start)
+    int find(ItemType* type, const int start = 0) const;
+    // Find the first stack of the given type (going back from start)
+    int r_find(ItemType* type, const int start = 0) const;
 
     inline unsigned int length() const { return _length; }
 
@@ -191,7 +204,7 @@ public:
         void count();
 
         /* Sort by kind of item, optionally offset to have another ItemKind be first. */
-        void kind(const unsigned int = 0);
+        void kind(const unsigned int first = 0);
 
         /* Sort function to separate out false ItemStacks */
         void exist();
@@ -208,20 +221,25 @@ public:
         int _kind(ItemStack*, ItemStack*, const int = 0) const;
 
         template<typename SortFunction>
+        // Do the sorting based on the given function
         void _sort(SortFunction);
     } sort;
 
+    // Pointer to the first stack
     inline ItemStack* begin() const { return _slots; }
+    // Pointer to the last stack
     inline ItemStack* end() const { return _slots + _length; }
 
     inline ItemStack& operator[](const unsigned int i) const { return _slots[i]; }
 
     int add(ItemType*, const unsigned int = 1, const unsigned int = 1, const StatList = StatList());
 
-    Inventory& operator<<(Item*);
-    Inventory& operator<<(ItemStack&);
+    // Add an item to the inventory
+    Inventory& operator<<(Item* item);
+    // Add a stack of items to the inventory
+    Inventory& operator<<(ItemStack& stack);
 
-    friend std::ostream& operator<<(std::ostream&, const Inventory&);
+    friend std::ostream& operator<<(std::ostream& out, const Inventory& inv);
 private:
     ItemStack * _slots;
     const unsigned int _length;

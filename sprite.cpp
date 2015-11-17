@@ -1,5 +1,4 @@
 #include "sprite.h"
-#include <iostream>
 
 std::map<std::string, Sprite*> Sprite::all_sprites = std::map<std::string, Sprite*>();
 
@@ -56,7 +55,6 @@ void Sprite::set_frames(const Rect& base, const Rect& bound) {
             ++n;
             next();
             _frames[--n] = frame;
-            std::cout << frame.x << ' ' << frame.y << std::endl;
         } else {
             _frame_count = n;
             _frames = new Rect[n];

@@ -14,6 +14,7 @@ public:
 	~Message() {}
 
     Message operator+(const Message&) const;
+    // Produce a plain string containing "Speaker: Message"
     std::string to_string() const { return _speaker.to_string() + ": " + _message.to_string(); }
     FormatString next() {};
 private:
@@ -27,8 +28,10 @@ class Dialog {
 public:
 	Dialog(int messageCount = 0) : _messageCount(messageCount) {}
 	~Dialog() {}
+    // Import dialog from a file
     static Dialog import(std::string) { return Dialog(); }
 
+    // Get the next message in the Dialog
     Message next() { return _messages[++_currentMessage]; }
 private:
 	Message* _messages;

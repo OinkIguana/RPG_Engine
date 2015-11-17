@@ -206,7 +206,7 @@ std::ostream& operator<<(std::ostream& out, const Item& i) {
     return out;
 }
 
-ItemStack::ItemStack(ItemType * type) : _type(type), _items(new Item*[type == nullptr ? 1 : type->max_stack()]){
+ItemStack::ItemStack(ItemType* type) : _type(type), _items(new Item*[type == nullptr ? 1 : type->max_stack()]){
     const unsigned int len = (type == nullptr ? 1 : type->max_stack());
     for (unsigned int i = 0; i < len; i++) {
         _items[i] = nullptr;
@@ -221,7 +221,7 @@ ItemStack::~ItemStack() {
     delete[] _items;
 }
 
-void ItemStack::reset(ItemType * t) {
+void ItemStack::reset(ItemType* t) {
     delete[] _items;
     _type = t;
     const unsigned int len = (_type == nullptr ? 1 : _type->max_stack());

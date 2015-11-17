@@ -10,18 +10,30 @@
 
 class Image {
 public:
-    static Image* get(const std::string&, const std::string& = "");
+    // Get the image with the given name, or add one from a url
+    static Image* get(const std::string& name, const std::string& url = "");
     ~Image();
 
-    void draw(const Point&, const Rect&) const;
-    void draw(const Point&) const;
+    // Draw part of the image to the screen
+    void draw(const Point& pos, const Rect& src) const;
+    // Draw the whole image to the screen
+    void draw(const Point& pos) const;
 
+    // Get the width of the image
     inline unsigned int width() const { return _width; };
+    // Get the height of the image
     inline unsigned int height() const { return _height; };
 
-    static void import(const std::string&);
+    /* Import images from a file in the form of:
+    *  ============
+    *  image_name "path/to/file.png"
+    *  image_name "path/to/file2.png"
+    *  ============
+    */
+    static void import(const std::string& path);
 private:
-    Image(const std::string&, const std::string&);
+    // Load a new image from a file
+    Image(const std::string& name, const std::string& file);
     const std::string _name;
     const std::string _file;
     SDL_Texture* _tex;

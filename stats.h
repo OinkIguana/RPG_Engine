@@ -13,8 +13,15 @@ public:
     static Stat* get(std::string, std::string = "");
     ~Stat() { all_stats.erase(_name); }
 
-    std::string to_string(const int) const;
+    // Inserts the given amount into the stat description, and produces the string of Name: Description
+    std::string to_string(const int amount) const;
+    // Produces the string of Name: Description
+    std::string to_string() const;
     
+    /* Import stats from a file of the form:
+    *  Name:Desc
+    *  Name:Desc With % Inserted Value
+    */
     static void import(const std::string);
     inline static void delete_all() { all_stats.clear(); }
 private:
@@ -35,16 +42,20 @@ public:
     StatList(std::string);
     ~StatList() {}
 
+    // Add two stat lists
     StatList operator+(const StatList) const;
+    // Subtract a second stat list from the first
     StatList operator-(const StatList) const;
     StatList operator+=(const StatList);
     StatList operator-=(const StatList);
     int& operator[](Stat*);
 
+    // Turn a stat list to a string representation
     std::string to_string() const;
     friend std::ostream& operator<<(std::ostream&, const StatList&);
 
-    bool read(std::string);
+    // Produce a stat list based on a string representation: stat:level,stat2:level2
+    bool read(std::string list);
 private:
     std::map<Stat*, int> _stats;
 };

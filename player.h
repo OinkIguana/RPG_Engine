@@ -2,8 +2,10 @@
 #include "actor.h"
 
 class Player : public Actor {
-
+public:
+    Player() : Actor() {
+        _sprite = Sprite::get("run_cat");
+    }
+    void step();
 protected:
-    Sprite* _sprite = Sprite::get("white_cat");
-
 };

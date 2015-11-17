@@ -9,7 +9,7 @@ public:
     ~Tile() {}
 private:
     Point pos;
-    Image image;
+    // Image image;
     Rect piece;
     int layer;
 };

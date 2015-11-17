@@ -16,8 +16,11 @@ Stat* Stat::get(std::string name, std::string desc) {
 }
 
 std::string Stat::to_string(const int l) const {
-    std::string desc = (std::string) (_desc << l);
+    std::string desc = (_desc << l).to_string();
     return _name + ": " + (desc == "" ? std::to_string(l) : desc);
+}
+std::string Stat::to_string() const {
+    return _name + ": " + _desc.to_string();
 }
 
 void Stat::import(const std::string fname) {
