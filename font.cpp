@@ -1,5 +1,4 @@
 #include "font.h"
-#include <iostream>
 
 std::map<std::string, Font*> Font::all_fonts = std::map<std::string, Font*>();
 

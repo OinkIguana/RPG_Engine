@@ -1,11 +1,14 @@
 #include "rpg.h"
 
-#define WINDOW_WIDTH    1024
-#define WINDOW_HEIGHT   756
+RPG::ActorList RPG::_actors;
 
 SDL_Window* RPG::_game_window;
 SDL_Renderer* RPG::_game_renderer;
 bool RPG::_done = false;
+RPG::Keystate* RPG::_keys = nullptr;
+const Uint8* RPG::_sdl_keys = nullptr;
+int RPG::_num_keys = 0;
+
 void RPG::init() {
     _game_window = SDL_CreateWindow("Untitled RPG", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     if (_game_window == NULL) {
@@ -14,6 +17,12 @@ void RPG::init() {
     _game_renderer = SDL_CreateRenderer(_game_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (_game_renderer == NULL) {
         return;
+    };
+    _sdl_keys = SDL_GetKeyboardState(&_num_keys);
+    
+    _keys = new Keystate[_num_keys];
+    for (int i = 0; i < _num_keys; i++) {
+        _keys[i] = Keystate::RELEASED;
     }
 }
 
@@ -26,24 +35,49 @@ void RPG::process_events() {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         switch (e.type) {
+        case SDL_KEYDOWN:
+            if (_keys[e.key.keysym.scancode] == Keystate::RELEASED) {
+                _keys[e.key.keysym.scancode] = Keystate::PRESSED;
+                _each_actor([e](Actor* act) { act->key_down(e.key.keysym.scancode); });
+            }
+            break;
+        case SDL_KEYUP:
+            if (_keys[e.key.keysym.scancode] == Keystate::PRESSED) {
+                _keys[e.key.keysym.scancode] = Keystate::RELEASED;
+                _each_actor([e](Actor* act) { act->key_up(e.key.keysym.scancode); });
+            }
+            break;
         case SDL_QUIT: 
             quit();
             break;
         }
     }
+    for (int i = 0; i < _num_keys; i++) {
+        if (_keys[i] == Keystate::PRESSED) {
+            _each_actor([i](Actor* act) { act->key((SDL_Scancode) i); });
+        }
+    }
 }
 
 void RPG::step() {
-    unsigned int count;
-    Actor** all = Actor::all<Actor>(&count);
-    for (unsigned int i = 0; i < count; i++) {
-        all[i]->step();
-    }
+    // Update actor list
+    _actors.list = Actor::all<Actor>(&_actors.length);
+
+    // Run the step
+    _each_actor([](Actor* act) { act->step(); });
 }
+
 void RPG::draw() {
+    // Update this to take layers into account later
+    _each_actor([](Actor* act) { act->draw(); });
+
     unsigned int count;
-    Actor** all = Actor::all<Actor>(&count);
+    Background** bgs = Background::get_temps(&count);
     for (unsigned int i = 0; i < count; i++) {
-        all[i]->draw();
+        bgs[i]->draw();
+    }
+
+    if (Dialog::visible()) {
+        Dialog::draw();
     }
 }

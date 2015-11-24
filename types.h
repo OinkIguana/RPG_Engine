@@ -26,6 +26,7 @@ struct Point {
 
     Point operator+(const Point) const;
     Point operator-(const Point) const;
+    Point operator-() const;
     Point operator*(const int) const;
     Point operator/(const int) const;
     Point operator+=(const Point);
@@ -54,6 +55,7 @@ struct Pointf{
 
     Pointf operator+(const Pointf) const;
     Pointf operator-(const Pointf) const;
+    Pointf operator-() const;
     Pointf operator*(const float) const;
     Pointf operator/(const float) const;
     Pointf operator+=(const Pointf);
@@ -78,6 +80,7 @@ struct Rect {
 
     Rect(const int a = 0, const int b = 0, const int c = 0, const int d = 0) : x(a), y(b), w(c), h(d) {}
     Rect(const Point a, const Point b) : x(a.x), y(a.y), w(b.x - a.x), h(b.y - a.y) {}
+    static const Rect no_box;
 
     // Returns the area of the rectangle
     inline int area() const { return w * h; }
@@ -106,11 +109,15 @@ struct Rect {
     // Moves the current rectangle to the given rectangle's position
     Rect operator>>=(const Rect);
 
+    // Moves the current rectangle by the given distance
+    Rect operator+(const Point) const;
+
     // Resizes the current rectangle to the given rectangle's size
     Rect operator<<=(const Rect);
 
     Rect operator=(const Rect);
     bool operator==(const Rect) const;
+    bool operator!=(const Rect) const;
 
     operator SDL_Rect() const;
     operator Rectf() const;
@@ -124,6 +131,7 @@ struct Rectf {
 
     Rectf(const float a = 0, const float b = 0, const float c = 0, const float d = 0) : x(a), y(b), w(c), h(d) {}
     Rectf(const Pointf a, const Pointf b) : x(a.x), y(a.y), w(b.x - a.x), h(b.y - a.y) {}
+    static const Rectf no_box;
 
     // Returns the area of the Rect
     inline float area() const { return w * h; }
@@ -155,8 +163,12 @@ struct Rectf {
     // Resizes the current rectangle to the given rectangle's size
     Rectf operator<<=(const Rectf);
 
+    // Moves the current rectangle by the given distance
+    Rectf operator+(const Pointf) const;
+
     Rectf operator=(const Rectf);
     bool operator==(const Rectf) const;
+    bool operator!=(const Rectf) const;
 
     inline operator SDL_Rect() const;
     inline operator Rect() const;
@@ -171,7 +183,7 @@ struct Color {
     Uint8 b;
     Uint8 a = 0xFF;
 
-    Color(Uint8 r, Uint8 g, Uint8 b, Uint8 a = 0xFF) : r(r), g(g), b(b), a(a) {};
+    Color(Uint8 rr, Uint8 gg, Uint8 bb, Uint8 aa = 0xFF) : r(rr), g(gg), b(bb), a(aa) {};
 
     static Color hex(unsigned int);
 

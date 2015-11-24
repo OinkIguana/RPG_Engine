@@ -5,6 +5,7 @@
 #include <fstream>
 #include "formatstring.h"
 
+// A stat
 class Stat {
 public:
     /*
@@ -23,7 +24,6 @@ public:
     *  Name:Desc With % Inserted Value
     */
     static void import(const std::string);
-    inline static void delete_all() { all_stats.clear(); }
 private:
     /*
         Use Stat::get to create/use Stats
@@ -36,6 +36,7 @@ private:
     static std::map<std::string, Stat*> all_stats;
 };
 
+// A set of stats with levels
 class StatList {
 public:
     StatList() {}

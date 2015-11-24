@@ -1,7 +1,10 @@
 #include "draw.h"
 #include "rpg.h"
-#include <iostream>
 
+void draw::texture(const Rect& p, SDL_Texture* tex) {
+    SDL_Rect dest = p;
+    SDL_RenderCopy(RPG::game_renderer(), tex, NULL, &dest);
+}
 void draw::texture(const Point& p, SDL_Texture* tex) {
     int w, h;
     SDL_QueryTexture(tex, NULL, NULL, &w, &h);
@@ -22,6 +25,11 @@ void draw::clear() {
 }
 void draw::render() {
     SDL_RenderPresent(RPG::game_renderer());
+}
+
+void draw::rect(const Rect& rect) {
+    SDL_Rect r = (SDL_Rect)rect;
+    SDL_RenderFillRect(RPG::game_renderer(), &r);
 }
 
 void draw::set_color(const Color& col) {

@@ -7,6 +7,7 @@
 #include "types.h"
 #include "image.h"
 
+// A Sprite for an actor, with many frames
 class Sprite {
 public:
     // Get the sprite with the requested name, or create one which has the image given

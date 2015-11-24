@@ -1,9 +1,6 @@
 #include <iostream>
 #include "rpg.h"
 
-#include "player.h"
-#include "npc.h"
-
 void game();
 void ev_step();
 void ev_draw();
@@ -46,10 +43,11 @@ void game() {
     Image::import("test.image");
     Sprite::import("test.sprite");
     ItemType::import("test.items");
-    Dialog::import("main.dialog");
+    Dialog::import("test.dialog");
     Stat::import("test.stats");
+    Room::import();
 
-    Actor::create<Player>();
+    Room::get("demo")->go_to();
 
     //Do the game stuff
     while (!RPG::is_done()) {

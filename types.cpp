@@ -6,6 +6,9 @@ Point Point::operator+(const Point o) const {
 Point Point::operator-(const Point o) const {
     return Point(x - o.x, y - o.y);
 }
+Point Point::operator-() const {
+    return Point(-x, -y);
+}
 Point Point::operator*(const int n) const {
     return Point(x * n, y * n);
 }
@@ -59,6 +62,9 @@ Pointf Pointf::operator+(const Pointf o) const {
 Pointf Pointf::operator-(const Pointf o) const {
     return Pointf(x - o.x, y - o.y);
 }
+Pointf Pointf::operator-() const {
+    return Pointf(-x, -y);
+}
 Pointf Pointf::operator*(const float n) const {
     return Pointf(x * n, y * n);
 }
@@ -106,26 +112,29 @@ Pointf::operator Rectf() const {
     return Rectf(x, y, 1, 1);
 }
 
+const Rect Rect::no_box = Rect(0, 0, 0, 0);
+
 Rect Rect::operator&(const Rect o) const {
-    Rect t = (*this).abs(), s = o.abs();
+    Rect t = abs(), s = o.abs();
     int xx = 0, yy = 0, ww = 0, hh = 0;
     if(t.x <= s.rs() && t.rs() > s.x) {
         xx = (int) std::fmax(t.x, s.x);
-        ww = (int) std::fmin(    std::fmin(t.w, s.w),
+        ww = (int) std::fmin(   std::fmin(t.w, s.w),
                                 std::fmin(std::abs(s.rs() - t.x), std::abs(t.rs() - s.x)));
     }
 
     if(t.y <= s.bot() && t.bot() > s.y) {
         yy = (int) std::fmax(t.y, s.y);
-        hh = (int) std::fmin(    std::fmin(t.h, s.h),
+        hh = (int) std::fmin(   std::fmin(t.h, s.h),
                                 std::fmin(std::abs(s.bot() - t.y), std::abs(t.bot() - s.y)));
     }
-    return Rect(xx, yy, ww, hh);
+    return Rect((hh && ww) ? xx : 0, (hh && ww) ? yy : 0, hh ? ww : 0, ww ? hh : 0);
 }
 Rect Rect::operator|(const Rect o) const {
-    Rect t = (*this).abs(), s = o.abs();
+    Rect t = abs(), s = o.abs();
     int xx = (int) std::fmin(t.x, s.x), yy = (int) std::fmin(t.y, s.y);
-    return Rect(xx, yy, (int) std::fmax(t.x + t.w - xx, s.x + s.w - xx), (int) std::fmax(t.y + t.h - yy, s.y + s.h - yy));
+    int ww = (int) std::fmax(t.x + t.w - xx, s.x + s.w - xx), hh = (int)std::fmax(t.y + t.h - yy, s.y + s.h - yy);
+    return Rect(xx, yy, ww, hh);
 }
 Rect Rect::operator>>(const Rect o) const {
     return Rect(o.x, o.y, w, h);
@@ -137,6 +146,9 @@ Rect Rect::operator>>=(const Rect o) {
     x = o.x;
     y = o.y;
     return *this;
+}
+Rect Rect::operator+(const Point o) const {
+    return Rect(x + o.x, y + o.y, w, h);
 }
 Rect Rect::operator<<=(const Rect o) {
     w = o.w;
@@ -153,6 +165,9 @@ Rect Rect::operator=(const Rect o) {
 bool Rect::operator==(const Rect o) const {
     return x == o.x && y == o.y && w == o.w && h == o.h;
 }
+bool Rect::operator!=(const Rect o) const {
+    return x != o.x || y != o.y || w != o.w || h != o.h;
+}
 Rect::operator SDL_Rect() const {
     return { x, y, w, h };
 }
@@ -166,8 +181,10 @@ Rect::operator Pointf() const {
     return Pointf((float) x, (float) y);
 }
 
+const Rectf Rectf::no_box = Rectf(0, 0, 0, 0);
+
 Rectf Rectf::operator&(const Rectf o) const {
-    Rect t = (*this).abs(), s = o.abs();
+    Rect t = abs(), s = o.abs();
     float xx = 0, yy = 0, ww = 0, hh = 0;
     if(t.x <= s.rs() && t.rs() > s.x) {
         xx = (float) std::fmax(t.x, s.x);
@@ -183,7 +200,7 @@ Rectf Rectf::operator&(const Rectf o) const {
     return Rectf(xx, yy, ww, hh);
 }
 Rectf Rectf::operator|(const Rectf o) const {
-    Rect t = (*this).abs(), s = o.abs();
+    Rect t = abs(), s = o.abs();
     float xx = (float) std::fmin(t.x, s.x), yy = (float) std::fmin(t.y, s.y);
     return Rectf(xx, yy, std::fmax(t.x + t.w - xx, s.x + s.w - xx), std::fmax(t.y + t.h - yy, s.y + s.h - yy));
 }
@@ -203,6 +220,9 @@ Rectf Rectf::operator<<=(const Rectf o) {
     h = o.h;
     return *this;
 }
+Rectf Rectf::operator+(const Pointf o) const {
+    return Rectf(x + o.x, y + o.y, w, h);
+}
 Rectf Rectf::operator=(const Rectf o) {
     x = o.x;
     y = o.y;
@@ -212,6 +232,9 @@ Rectf Rectf::operator=(const Rectf o) {
 }
 bool Rectf::operator==(const Rectf o) const {
     return x == o.x && y == o.y && w == o.w && h == o.h;
+}
+bool Rectf::operator!=(const Rectf o) const {
+    return x != o.x || y != o.y || w != o.w || h != o.h;
 }
 Rectf::operator SDL_Rect() const {
     return { (int)x, (int)y, (int)w, (int)h };

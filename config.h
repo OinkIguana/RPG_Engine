@@ -1,4 +1,5 @@
 #pragma once
+
 #include <sdl.h>
 
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
@@ -12,3 +13,6 @@
 #define BMASK   0x00ff0000
 #define AMASK   0xff000000
 #endif
+
+#define WINDOW_WIDTH    1024
+#define WINDOW_HEIGHT   768

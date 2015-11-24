@@ -1,6 +1,5 @@
 #include "formatstring.h"
 #include "rpg.h"
-#include <iostream>
 #include <iomanip>
 
 std::map<char, unsigned int> FormatString::_color_map;
@@ -15,13 +14,14 @@ FormatString::FormatString(const std::string& raw, const int& width) : _raw(raw)
     unsigned int max_width = 0;
     unsigned int chunk_start = 0;
     std::string prev_chunk = "";
-    (next = [&] (const unsigned int start, const unsigned int iteration) {
+    (next = [&](const unsigned int start, const unsigned int iteration) {
         FormatString::_Piece piece;
         piece.color = col_prev;
         piece.font = font_prev;
+        piece.text = "";
         piece.x = line_x;
         piece.y = line_y;
-        prev_chunk = piece.text;
+        prev_chunk = "";
         bool escape = false, color = false, font = false;
         unsigned int i = start, delay = 0;
         chunk_start = i;
@@ -66,6 +66,7 @@ FormatString::FormatString(const std::string& raw, const int& width) : _raw(raw)
                     goto next_piece;
                 }
                 ++delay;
+                ++_total_wait;
                 break;
             case FormatString::SYM::COLOR:
                 if (piece.text.length() != 0) {
@@ -115,28 +116,41 @@ FormatString::FormatString(const std::string& raw, const int& width) : _raw(raw)
 
         _pieces[iteration] = piece;
     })(0, 0);
-
     _width = max_width;
 }
 
 FormatString::~FormatString() {
-    delete[] _pieces;
     SDL_DestroyTexture(_tex);
+    _tex = NULL;
 }
 
 void FormatString::draw(const Point& p) {
     if (_tex == NULL) {
         SDL_Surface* surf = SDL_CreateRGBSurface(0, _width, _height, 32, RMASK, GMASK, BMASK, AMASK);
         for (unsigned int i = 0; i < _length; i++) {
-            SDL_Surface* piece = _pieces[i].font->to_surface(_pieces[i].text, _pieces[i].color);
-            SDL_Rect pos = Rect(_pieces[i].x, _pieces[i].y, piece->w, piece->h);
-            SDL_BlitSurface(piece, NULL, surf, &pos);
-            SDL_FreeSurface(piece);
+            try {
+                SDL_Surface* piece = _pieces[i].font->to_surface(_pieces[i].text, _pieces[i].color);
+                SDL_Rect pos = Rect(_pieces[i].x, _pieces[i].y, piece->w, piece->h);
+                SDL_BlitSurface(piece, NULL, surf, &pos);
+                SDL_FreeSurface(piece);
+            } catch (int) {};
         }
         _tex = SDL_CreateTextureFromSurface(RPG::game_renderer(), surf);
         SDL_FreeSurface(surf);
     }
     draw::texture(p, _tex);
+}
+
+FormatString FormatString::upto(const unsigned int& count) const {
+    std::string raw = "";
+    std::string text = "";
+    while (text.length() < count) {
+        text += _text[text.length()];
+        do {
+            raw += _raw[raw.length()];
+        } while (_raw[raw.length()] != _text[text.length()]);
+    }
+    return FormatString(raw);
 }
 
 FormatString FormatString::operator<<(const int& v) const {

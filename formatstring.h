@@ -23,7 +23,16 @@ public:
 
     //Get calculated width of the string
     inline int width() const { return _width; }
+    //Get calculated height of the string
     inline int height() const { return _height; }
+    //Get the length of the string (including wait times)
+    inline unsigned int length() const { return _text.length() + _total_wait; }
+
+    //Get a piece of the FormatString
+    FormatString upto(const unsigned int& count = std::string::npos) const;
+
+    //Merge two FormatStrings
+    inline FormatString operator+(const FormatString& o) const { return FormatString(_raw + o._raw); }
 
     //Replace the first SYM::VAR with the given value
     FormatString operator<<(const int& v) const;
@@ -60,6 +69,7 @@ private:
 
     unsigned int _width;
     unsigned int _height = 0;
+    unsigned int _total_wait = 0;
 
     SDL_Texture* _tex = NULL;
 
@@ -73,7 +83,6 @@ private:
     } _Piece;
     _Piece * _pieces;
     unsigned int _length;
-    inline FormatString substr(unsigned int s = 0, unsigned int l = std::string::npos) const { return FormatString(_raw.substr(s, l)); }
 
     static std::map<char, unsigned int> _color_map;
     static std::map<char, Font*> _font_map;

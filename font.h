@@ -8,6 +8,7 @@
 #include "draw.h"
 #include "types.h"
 
+// A font for writing text with
 class Font {
 public:
     // Get the font with the given name, or the default font if no name is provided

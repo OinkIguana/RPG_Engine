@@ -11,6 +11,7 @@ const unsigned int DEFAULT_MAX_STACK = 99;
 
 enum { BUY, SELL };
 
+// A type of item
 class ItemType {
 public:
     /*
@@ -79,6 +80,7 @@ private:
     static std::map<std::string, ItemType*> all_types;
 };
 
+// An instance of an item with a type
 class Item {
 public:
     // Create a new Item
@@ -105,6 +107,7 @@ private:
     StatList        _stats;
 };
 
+// A collection of one type of item
 class ItemStack {
 public:
     // Create a new ItemStack
@@ -172,6 +175,7 @@ private:
     void _sort();
 };
 
+// A collection of stacks of items of various types
 class Inventory {
 public:
     // Create a new Inventory with the given number of slots

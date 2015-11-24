@@ -1,6 +1,5 @@
 #include "image.h"
 #include "rpg.h"
-#include <iostream>
 
 std::map<std::string, Image*> Image::all_images = std::map<std::string, Image*>();
 
@@ -15,11 +14,30 @@ Image* Image::get(const std::string& name, const std::string& file) {
     return nullptr;
 }
 
+Image* Image::compose(const std::string& name, const unsigned int& n, Tile** tiles) {
+    all_images[name] = new Image(name, n, tiles);
+    return all_images[name];
+}
+
+Image * Image::compose(const unsigned int& n, Tile** tiles) {
+    return new Image("temp", n, tiles);
+}
+
 void Image::draw(const Point& dest, const Rect& src) const {
+    draw::texture_part(dest, _tex, src);
+}
+void Image::draw(const Rect& dest, const Rect& src) const {
     draw::texture_part(dest, _tex, src);
 }
 void Image::draw(const Point& dest) const {
     draw::texture(dest, _tex);
+}
+void Image::draw(const Rect& dest) const {
+    draw::texture(dest, _tex);
+}
+
+void Image::copy_to_surface(SDL_Surface* surf, SDL_Rect& piece, SDL_Rect& pos) const {
+    SDL_BlitSurface(_surf, &piece, surf, &pos);
 }
 
 void Image::import(const std::string& path) {
@@ -38,26 +56,40 @@ void Image::import(const std::string& path) {
         }
         if (url != "") { url += " "; }
         url += seg.substr(0, seg.length() - 1);
-        //Add the font
+        //Add the image
         get(name, url);
     }
 }
 
 Image::Image(const std::string& name, const std::string& file) : _name(name), _file("resource/image/" + file) {
-    SDL_Surface* surf = IMG_Load(_file.c_str());
-    if (surf == NULL) {
-        throw 1;
+    _surf = IMG_Load(_file.c_str());
+    if (_surf == NULL) { throw 1; }
+    _width = _surf->w;
+    _height = _surf->h;
+    _tex = SDL_CreateTextureFromSurface(RPG::game_renderer(), _surf);
+    if (_tex == NULL) { throw 2; }
+}
+
+Image::Image(const std::string& name, const unsigned int& n, Tile** tiles) : _name(name) {
+    Rect pos;
+    {   // Get the final dimensions/position of the background
+        std::function<Rect(Tile**, const unsigned int&)> merge;
+        pos = (merge = [&merge](Tile** tiles, const unsigned int& n) {
+            return (n == 0) ? tiles[0]->pos() : tiles[n]->pos() | merge(tiles, n - 1);
+        })(tiles, n - 1);
     }
-    _width = surf->w;
-    _height = surf->h;
-    _tex = SDL_CreateTextureFromSurface(RPG::game_renderer(), surf);
-    if (_tex == NULL) {
-        throw 2;
+    _surf = SDL_CreateRGBSurface(0, pos.w, pos.h, 32, RMASK, GMASK, BMASK, AMASK);
+    if (_surf == NULL) { throw 1; }
+    for (unsigned int i = 0; i < n; i++) {
+        tiles[i]->copy_to_surface(_surf, -(Point)pos);
     }
-    SDL_FreeSurface(surf);
+    _tex = SDL_CreateTextureFromSurface(RPG::game_renderer(), _surf);
+    if (_tex == NULL) { throw 2; }
 }
 
 Image::~Image() {
     SDL_DestroyTexture(_tex);
+    SDL_FreeSurface(_surf);
+
     all_images.erase(_name);
 }
