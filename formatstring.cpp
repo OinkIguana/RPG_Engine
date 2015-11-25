@@ -124,7 +124,7 @@ FormatString::~FormatString() {
     _tex = NULL;
 }
 
-void FormatString::draw(const Point& p) {
+void FormatString::draw(const Point& p, const int& depth) {
     if (_tex == NULL) {
         SDL_Surface* surf = SDL_CreateRGBSurface(0, _width, _height, 32, RMASK, GMASK, BMASK, AMASK);
         for (unsigned int i = 0; i < _length; i++) {
@@ -138,7 +138,7 @@ void FormatString::draw(const Point& p) {
         _tex = SDL_CreateTextureFromSurface(RPG::game_renderer(), surf);
         SDL_FreeSurface(surf);
     }
-    draw::texture(p, _tex);
+    draw::texture(p, depth, _tex);
 }
 
 FormatString FormatString::upto(const unsigned int& count) const {

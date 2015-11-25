@@ -2,6 +2,8 @@
 
 #include <SDL.h>
 #include <SDL_TTF.h>
+#include <SDL_image.h>
+#include <SDL_mixer.h>
 #include "types.h"
 #include "draw.h"
 #include "tile.h"
@@ -10,6 +12,7 @@
 #include "background.h"
 #include "font.h"
 #include "formatstring.h"
+#include "audio.h"
 #include "dialog.h"
 #include "stats.h"
 #include "inventory.h"

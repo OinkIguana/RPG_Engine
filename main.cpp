@@ -6,7 +6,7 @@ void ev_step();
 void ev_draw();
 
 int main(int argc, char* argv[]) {
-    //Initialize SDL 
+    //Initialize SDL
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         std::cout << "SDL_Init: " << SDL_GetError() << std::endl;
         return 1;
@@ -18,18 +18,26 @@ int main(int argc, char* argv[]) {
     }
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         std::cout << "IMG_Init: " << IMG_GetError() << std::endl;
+        TTF_Quit();
         SDL_Quit();
         return 3;
+    }
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) { 
+        std::cout << "Mix_OpenAudio: " << Mix_GetError() << std::endl;
+        IMG_Quit();
+        TTF_Quit();
+        SDL_Quit();
+        return 4;
     }
 
     //Run the game until error or quit
     game();
 
     //Quit SDL
+    Mix_Quit();
     IMG_Quit();
     TTF_Quit();
     SDL_Quit();
-
     return 0;
 }
 
@@ -41,6 +49,7 @@ void game() {
     Font::import("test.fonts");
     FormatString::import("test.format");
     Image::import("test.image");
+    Audio::import("test.audio");
     Sprite::import("test.sprite");
     ItemType::import("test.items");
     Dialog::import("test.dialog");

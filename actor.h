@@ -1,12 +1,12 @@
 #pragma once
 
-#include <functional>
 #include "types.h"
 #include "sprite.h"
+#include "config.h"
 
 /*
     Base for an Actor
-    Any children must have a line at the top in order to be used with the room editor that says:
+    For use with the room editor, an Actor must have this line in the file somewhere:
     #Actor: name image
 */
 class Actor {
@@ -46,7 +46,7 @@ public:
     // Set the current frame of the Sprite this Actor is on. Returns the new frame number
     inline unsigned int frame(const unsigned int& d) { return _frame = d % _sprite->frames(); }
     // Increment the current frame by a given amount. Returns the new frame number
-    inline unsigned int inc_frame(const int& d) { return _frame = (_frame + d + _sprite->frames()) % _sprite->frames(); }
+    inline unsigned int inc_frame(const int& d = 1) { return _frame = (_frame + d + _sprite->frames()) % _sprite->frames(); }
 
     // Get the current position of the Actor
     inline Point pos() const { return _pos; }
@@ -102,7 +102,7 @@ private:
     const unsigned int _id;
     unsigned int _frame = 0;
     Point _pos;
-    int _depth = 0;
+    int _depth = DEFAULT_ACTOR_LAYER;
 
     static std::map<unsigned int, Actor*> all_actors;
     static unsigned int c_id;

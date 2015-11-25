@@ -11,6 +11,29 @@ struct Pointf;
 struct Rect;
 struct Rectf;
 
+// A representation of an angle
+struct Angle {
+    int dx, dy;
+    int deg;
+    double rad;
+    Angle(const Point& p);
+    Angle(const int& dx, const int& dy);
+    Angle(const int& deg);
+    Angle(const double& rad);
+
+    Angle operator+(const Angle& o) const;
+    Angle operator-(const Angle& o) const;
+    Angle operator-() const;
+    Angle operator+=(const Angle& o);
+    Angle operator-=(const Angle& o);
+
+    // Compares angles (at degree level of accuracy)
+    bool operator==(const Angle& o) const;
+    bool operator!=(const Angle& o) const;
+};
+
+Angle operator ""_deg(unsigned long long);
+
 // Constants for directions
 enum { LEFT, RIGHT, UP, DOWN };
 
@@ -21,7 +44,7 @@ struct Point {
     Point(const int a = 0, const int b = 0) : x(a), y(b) {}
     ~Point() {}
 
-    // Returns the distance from this point to another given point
+    // Returns the distance from this point to another
     inline float distance(const Point o) const { return (float)std::sqrt(std::pow(x - o.x, 2) + std::pow(y - o.y, 2)); }
 
     Point operator+(const Point) const;
@@ -36,6 +59,7 @@ struct Point {
     Point operator=(const Point);
 
     bool operator==(const Point) const;
+    bool operator!=(const Point) const;
 
     operator SDL_Point() const;
     operator Pointf() const;
@@ -65,6 +89,7 @@ struct Pointf{
     Pointf operator=(const Pointf);
 
     bool operator==(const Pointf) const;
+    bool operator!=(const Pointf) const;
 
     operator SDL_Point() const;
     operator Point() const;

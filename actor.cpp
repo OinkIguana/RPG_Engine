@@ -11,6 +11,6 @@ Actor::~Actor() { all_actors.erase(_id); }
 
 void Actor::draw() {
     if (_sprite != nullptr) {
-        _sprite->draw(pos(), frame());
+        _sprite->draw(pos(), frame(), _depth);
     }
 }

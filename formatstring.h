@@ -15,7 +15,7 @@ public:
     ~FormatString();
 
     //Draw the string (formatted) to the screen
-    void draw(const Point& pos);
+    void draw(const Point& pos, const int& depth = 0);
 
     //Get the text only part of the string
     inline operator std::string() const { return _text; }

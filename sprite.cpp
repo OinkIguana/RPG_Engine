@@ -117,8 +117,8 @@ void Sprite::set_frames(const unsigned int& n, Rect* frames) {
     _frames = frames;
 }
 
-void Sprite::draw(const Point& pos, const unsigned int& fr) {
-    _image->draw(pos, _frames[fr]);
+void Sprite::draw(const Point& pos, const unsigned int& fr, const int& depth) {
+    _image->draw(pos, _frames[fr], depth);
 }
 
 void Sprite::import(const std::string& path) {

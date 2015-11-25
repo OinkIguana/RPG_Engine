@@ -22,13 +22,13 @@ public:
     ~Image();
 
     // Draw part of the image to the screen
-    void draw(const Point& pos, const Rect& src) const;
+    void draw(const Point& pos, const Rect& src, const int& depth = 0) const;
     // Draw part of the image to the screen, stretched to fill a space
-    void draw(const Rect& pos, const Rect& src) const;
+    void draw(const Rect& pos, const Rect& src, const int& depth = 0) const;
     // Draw the whole image to the screen
-    void draw(const Point& pos) const;
+    void draw(const Point& pos, const int& depth = 0) const;
     // Draw the whole image to the screen, stretched to fill a space
-    void draw(const Rect& pos) const;
+    void draw(const Rect& pos, const int& depth = 0) const;
 
     inline std::string name() const { return _name; }
     // Get the width of the image

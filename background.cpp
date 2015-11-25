@@ -54,5 +54,5 @@ Background** Background::get_temps(unsigned int* count) {
 }
 
 void Background::draw() const {
-    _img->draw(_pos);
+    _img->draw(_pos, _depth);
 }

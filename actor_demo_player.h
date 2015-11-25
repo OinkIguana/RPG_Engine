@@ -3,7 +3,7 @@
 #include "actor.h"
 
 /* 
-#Actor: Player walk_cat
+#Actor: Player walk_cat 50
 */
 class Player : public Actor {
 public:

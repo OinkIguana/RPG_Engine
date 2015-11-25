@@ -25,7 +25,7 @@ public:
     */
     static void import(const std::string& path);
     // Draw text at the point in the color
-    void draw(const Point& pos, const std::string& text, const unsigned int& color) const;
+    void draw(const Point& pos, const std::string& text, const unsigned int& color, const int& depth = 0) const;
     // Create a surface containing the text in the color, but don't draw it
     SDL_Surface* to_surface(const std::string& text, const unsigned int& col) const;
     // Get the dimensions of the text if it were drawn in this font

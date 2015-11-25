@@ -1,4 +1,4 @@
 c r 0xFF0000
 c g 0x00FF00
 c b 0x0000FF
-f l lazy32
+f L CodersCruxLarge

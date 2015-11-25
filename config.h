@@ -16,3 +16,6 @@
 
 #define WINDOW_WIDTH    1024
 #define WINDOW_HEIGHT   768
+
+#define GUI_LAYER               1000
+#define DEFAULT_ACTOR_LAYER     50

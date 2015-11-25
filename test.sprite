@@ -1,6 +1,6 @@
 walk_cat cat
 f 0 0 32 32
-b 0 0 96 128
+b 0 0 192 128
 x
 run_cat cat
 f 0 0 32 32

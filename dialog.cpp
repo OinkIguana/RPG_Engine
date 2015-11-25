@@ -12,10 +12,14 @@ Message Message::operator+(const Message& o) const {
     return Message(_speaker + o._speaker, _message + o._message);
 }
 
+std::function<void(Message*, const Point&)> Message::draw_fn = [] (Message* msg, const Point& pos) {
+    msg->speaker().draw(pos - Point(0, msg->speaker().height()), GUI_LAYER);
+    msg->increment();
+    msg->message().upto(msg->current_pos()).draw(pos, GUI_LAYER);
+};
+
 void Message::draw(const Point& pos) {
-    _speaker.draw(pos - Point(0, _speaker.height()));
-    increment();
-    _message.upto(_current_pos).draw(pos);
+    draw_fn(this, pos);
 }
 
 Dialog* Dialog::_on_display = nullptr;
@@ -81,15 +85,15 @@ void Dialog::next() {
     }
 }
 
-void Dialog::_draw() {
-    Rect box = Rect(0, WINDOW_HEIGHT - current().message().height() - current().speaker().height(), WINDOW_WIDTH, current().message().height() + current().speaker().height());
-    draw::set_color(Color(0, 0, 0, 0x33));
-    //draw::rect(box);
-    current().draw(Point(0, WINDOW_HEIGHT - current().message().height()));
-}
+std::function<void(Dialog*)> Dialog::draw_fn = [] (Dialog* dialog) {
+    Rect box = Rect(0, WINDOW_HEIGHT - 150, WINDOW_WIDTH, 150);
+    draw::set_color(Color(0xFF, 0xFF, 0xFF, 0x33));
+    draw::rect(box, GUI_LAYER);
+    dialog->current().draw(Point(0, WINDOW_HEIGHT - 150));
+};
 
 void Dialog::draw() {
     if (_on_display != nullptr) {
-        _on_display->_draw();
+        draw_fn(_on_display);
     }
 }

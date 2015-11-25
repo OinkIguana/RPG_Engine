@@ -69,14 +69,16 @@ void RPG::step() {
 
 void RPG::draw() {
     // Update this to take layers into account later
-    _each_actor([](Actor* act) { act->draw(); });
 
     unsigned int count;
     Background** bgs = Background::get_temps(&count);
     for (unsigned int i = 0; i < count; i++) {
-        bgs[i]->draw();
+        bgs[i]->draw(); 
     }
 
+    _each_actor([](Actor* act) { act->draw(); });
+
+    // Dialog on top always
     if (Dialog::visible()) {
         Dialog::draw();
     }

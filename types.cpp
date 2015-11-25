@@ -1,5 +1,56 @@
 #include "types.h"
 
+Angle::Angle(const int& dx, const int& dy) : dx(dx), dy(dy) {
+    if (dx == 0) {
+        if (dy > 0) {
+            deg = 270;
+            rad = 3 * M_PI / 2;
+        } else {
+            deg = 90;
+            rad = M_PI / 2;
+        }
+    } else {
+        rad = std::atan((double)(dy) / (double)(dx));
+        if (dx < 0) {
+            rad = M_PI - rad;
+        } else {
+            rad = -rad;
+        }
+        while (rad < 0) rad += 2 * M_PI;
+        deg = (int)(rad * 180 / M_PI);
+    }
+}
+Angle::Angle(const Point& p) : Angle(p.x, p.y) {}
+Angle::Angle(const int& d) : deg(d % 360), rad(d * M_PI / 180) { while (deg < 0) deg += 360; }
+Angle::Angle(const double& r) : rad(r), deg((int)(r * 180 / M_PI) % 360) { while (deg < 0) deg += 360; }
+
+Angle Angle::operator+(const Angle& o) const {
+    return Angle(deg + o.deg);
+}
+
+Angle Angle::operator-(const Angle& o) const {
+    return Angle(deg - o.deg);
+}
+
+Angle Angle::operator-() const {
+    return Angle(-deg);
+}
+
+Angle Angle::operator+=(const Angle& o) {
+    deg += o.deg;
+    return *this;
+}
+
+Angle Angle::operator-=(const Angle& o) {
+    deg -= o.deg;
+    return *this;
+}
+
+bool Angle::operator==(const Angle& o) const { return deg == o.deg; }
+bool Angle::operator!=(const Angle & o) const { return deg != o.deg; }
+
+Angle operator ""_deg(unsigned long long d) { return Angle((int)(d % 360)); }
+
 Point Point::operator+(const Point o) const {
     return Point(x + o.x, y + o.y);
 }
@@ -42,6 +93,9 @@ Point Point::operator=(const Point o) {
 }
 bool Point::operator==(const Point o) const {
     return x == o.x && y == o.y;
+}
+bool Point::operator!=(const Point o) const {
+    return x != o.x || y != o.y;
 }
 Point::operator SDL_Point() const {
     return { x, y };
@@ -98,6 +152,9 @@ Pointf Pointf::operator=(const Pointf o) {
 }
 bool Pointf::operator==(const Pointf o) const {
     return x == o.x && y == o.y;
+}
+bool Pointf::operator!=(const Pointf o) const {
+    return x != o.x || y != o.y;
 }
 Pointf::operator SDL_Point() const {
     return { (int)x, (int)y };

@@ -21,13 +21,15 @@ public:
     std::string to_string() const { return _speaker.to_string() + ": " + _message.to_string(); }
     FormatString next() {};
 
-    virtual void draw(const Point& pos);
+    void draw(const Point& pos);
 
     inline FormatString& speaker() { return _speaker; }
     inline FormatString& message() { return _message; }
     inline unsigned int current_pos() const { return _current_pos; }
     inline void current_pos(const unsigned int& x) { _current_pos = x; }
     inline void increment(const int& x = 1) { _current_pos = (unsigned int)std::fmin(_current_pos + x, _message.length()); }
+
+    static std::function<void(Message*, const Point&)> draw_fn;
 private:
 	FormatString _speaker;
 	FormatString _message;
@@ -58,11 +60,9 @@ public:
     inline void start() { _current_message = 0; _messages[_current_message].current_pos(0); _on_display = this; }
 
     static void draw();
+    static std::function<void(Dialog*)> draw_fn;
 
     ~Dialog() { delete _messages; }
-protected:
-    // Draw the dialog box
-    virtual void _draw();
 private:
     // Dialog must be imported
     Dialog(const std::string& name) : _name(name) {}

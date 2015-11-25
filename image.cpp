@@ -19,21 +19,21 @@ Image* Image::compose(const std::string& name, const unsigned int& n, Tile** til
     return all_images[name];
 }
 
-Image * Image::compose(const unsigned int& n, Tile** tiles) {
+Image* Image::compose(const unsigned int& n, Tile** tiles) {
     return new Image("temp", n, tiles);
 }
 
-void Image::draw(const Point& dest, const Rect& src) const {
-    draw::texture_part(dest, _tex, src);
+void Image::draw(const Point& dest, const Rect& src, const int& depth) const {
+    draw::texture_part(dest, depth, _tex, src);
 }
-void Image::draw(const Rect& dest, const Rect& src) const {
-    draw::texture_part(dest, _tex, src);
+void Image::draw(const Rect& dest, const Rect& src, const int& depth) const {
+    draw::texture_part(dest, depth, _tex, src);
 }
-void Image::draw(const Point& dest) const {
-    draw::texture(dest, _tex);
+void Image::draw(const Point& dest, const int& depth) const {
+    draw::texture(dest, depth, _tex);
 }
-void Image::draw(const Rect& dest) const {
-    draw::texture(dest, _tex);
+void Image::draw(const Rect& dest, const int& depth) const {
+    draw::texture(dest, depth, _tex);
 }
 
 void Image::copy_to_surface(SDL_Surface* surf, SDL_Rect& piece, SDL_Rect& pos) const {

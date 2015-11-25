@@ -54,10 +54,10 @@ void Font::import(const std::string& path) {
     }
 }
 
-void Font::draw(const Point& pos, const std::string& text, const unsigned int& color) const {
+void Font::draw(const Point& pos, const std::string& text, const unsigned int& color, const int& depth) const {
     SDL_Surface* surface = TTF_RenderText_Blended(_font, text.c_str(), Color::hex(color));
     if (surface == NULL) { throw 0; }
-    draw::surface(pos, surface);
+    draw::surface(pos, depth, surface);
     SDL_FreeSurface(surface);
 }
 SDL_Surface* Font::to_surface(const std::string& text, const unsigned int& color) const {

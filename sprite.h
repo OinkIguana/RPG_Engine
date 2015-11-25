@@ -31,7 +31,7 @@ public:
     inline unsigned int frames() const { return _frame_count; }
 
     // Draw the frame to the screen at pos
-    void draw(const Point& pos, const unsigned int& frame);
+    void draw(const Point& pos, const unsigned int& frame, const int& depth = 0);
 
     /* Import sprites from a file of the form
     *  =============
