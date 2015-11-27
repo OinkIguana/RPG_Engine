@@ -16,6 +16,8 @@ public:
 
     //Draw the string (formatted) to the screen
     void draw(const Point& pos, const int& depth = 0);
+    //Draw part of the formatted string to the screen
+    void draw_upto(const unsigned int& end, const Point& pos, const int& depth = 0);
 
     //Get the text only part of the string
     inline operator std::string() const { return _text; }
@@ -81,7 +83,7 @@ private:
         unsigned int x = 0;
         unsigned int y = 0;
     } _Piece;
-    _Piece * _pieces;
+    _Piece ** _pieces;
     unsigned int _length;
 
     static std::map<char, unsigned int> _color_map;

@@ -175,7 +175,9 @@ void Sprite::import(const std::string& path) {
             }
         }
 
-        delete frame, bound, sep;
+        delete frame;
+        delete bound;
+        delete sep;
     }
 }
 

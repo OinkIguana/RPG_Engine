@@ -61,6 +61,7 @@ void RPG::process_events() {
 
 void RPG::step() {
     // Update actor list
+    delete[] _actors.list;
     _actors.list = Actor::all<Actor>(&_actors.length);
 
     // Run the step
@@ -68,14 +69,12 @@ void RPG::step() {
 }
 
 void RPG::draw() {
-    // Update this to take layers into account later
-
     unsigned int count;
     Background** bgs = Background::get_temps(&count);
     for (unsigned int i = 0; i < count; i++) {
         bgs[i]->draw(); 
     }
-
+    delete[] bgs;
     _each_actor([](Actor* act) { act->draw(); });
 
     // Dialog on top always

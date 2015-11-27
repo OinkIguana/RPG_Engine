@@ -14,11 +14,11 @@ public:
     Actor();
 
     // Returns the number of Actor's of type T that currently exist
-    template<class T>
+    template<typename T>
     static unsigned int count();
     // Get an array of pointers to all Actors of type T.
     // count is set to the length of the array
-    template<class T>
+    template<typename T>
     static T** all(unsigned int* count = nullptr);
 
     // Get an actor by its id
@@ -26,7 +26,7 @@ public:
 
     // Create a new Actor of type T
     // Returns the pointer to the new Actor
-    template<class T>
+    template<typename T>
     inline static T* create() { return new T(); }
 
     // Destroys the given Actor
@@ -78,10 +78,10 @@ protected:
     // Determines if the current Actor would collide with any of the others at a given position
     inline bool collides(Actor** o, const unsigned int& n, const Point& p) const { for (unsigned int i = 0; i < n; i++) { if (collides(o[i], p)) return true; } return false; }
     // Determines if the current Actor collides with any of a type
-    template<class T>
+    template<typename T>
     inline bool collides() const;
     // Determines if the current Actor would collide with any of a type at a given position
-    template<class T>
+    template<typename T>
     inline bool collides(const Point& p) const;
 
     // Determines if the current Actor lies against another
@@ -93,10 +93,10 @@ protected:
     // Determines if the current Actor would lie against any of the others at a given position
     inline bool against(Actor** o, const unsigned int& n, const Point& p) const { for (unsigned int i = 0; i < n; i++) { if (against(o[i], p)) return true; } return false; }
     // Determines if the current Actor lies against any of a type
-    template<class T>
+    template<typename T>
     inline bool against() const;
     // Determines if the current Actor lies against any of a type at a given position
-    template<class T>
+    template<typename T>
     inline bool against(const Point& p) const;
 private:
     const unsigned int _id;
@@ -108,7 +108,7 @@ private:
     static unsigned int c_id;
 };
 
-template<class T>
+template<typename T>
 unsigned int Actor::count() {
     if (typeid(T) == typeid(Actor)) { return all_actors.size(); }
     unsigned int n = 0;
@@ -118,7 +118,7 @@ unsigned int Actor::count() {
     return n;
 }
 
-template<class T>
+template<typename T>
 T** Actor::all(unsigned int* count) {
     auto i = all_actors.begin();
     T** list;
@@ -146,39 +146,43 @@ T** Actor::all(unsigned int* count) {
     return list;
 }
 
-template<class T>
+template<typename T>
 inline bool Actor::collides() const {
     unsigned int* n = new unsigned int();
     Actor** a = (Actor**)all<T>(n);
     bool does = collides(a, *n);
-    delete n, a;
+    delete n;
+    delete[] a;
     return does;
 }
 
-template<class T>
+template<typename T>
 inline bool Actor::collides(const Point & p) const {
     unsigned int* n = new unsigned int();
     Actor** a = (Actor**)all<T>(n);
     bool does = collides(a, *n, p);
-    delete n, a;
+    delete n;
+    delete[] a;
     return does;
 }
 
-template<class T>
+template<typename T>
 inline bool Actor::against() const {
     unsigned int* n = new unsigned int();
     Actor** a = (Actor**)all<T>(n);
     bool does = against(a, *n);
-    delete n, a;
+    delete n;
+    delete[] a;
     return does;
 }
 
-template<class T>
+template<typename T>
 inline bool Actor::against(const Point & p) const {
     unsigned int* n = new unsigned int();
     Actor** a = (Actor**)all<T>(n);
     bool does = against(a, *n, p);
-    delete n, a;
+    delete n;
+    delete[] a;
     return does;
 }
 

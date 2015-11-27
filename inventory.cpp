@@ -354,13 +354,13 @@ std::ostream& operator<<(std::ostream& out, const Inventory& inv) {
 }
 
 void Inventory::InventorySorter::alphabetical() {
-    _sort([this](ItemStack* a, ItemStack* b) {
+    _sort([this](const unsigned int& a, const unsigned int& b) {
         return (!_null(a)) && (_null(b) || _alphabet(a, b) || _stack_size(a, b) || _stack_level(a, b));
     });
 }
 
 void Inventory::InventorySorter::count() {
-    _sort([this](ItemStack* a, ItemStack* b) {
+    _sort([this](const unsigned int& a, const unsigned int& b) {
         if (_null(a)) { return false; }
         if (_null(b)) { return true; }
         int ic = _inv_count(a, b);
@@ -370,7 +370,7 @@ void Inventory::InventorySorter::count() {
 }
 
 void Inventory::InventorySorter::kind(const unsigned int first) {
-    _sort([this, first](ItemStack* a, ItemStack* b) {
+    _sort([this, first](const unsigned int& a, const unsigned int& b) {
         if (_null(a)) { return false; }
         if (_null(b)) { return true; }
         int k = _kind(a, b, first);
@@ -380,35 +380,35 @@ void Inventory::InventorySorter::kind(const unsigned int first) {
 }
 
 void Inventory::InventorySorter::exist() {
-    _sort([this](ItemStack* a, ItemStack* b) {
+    _sort([this](const unsigned int& a, const unsigned int& b) {
         if (_null(a)) { return false; }
         if (_null(b)) { return true; }
         return true;
     });
 }
 
-bool Inventory::InventorySorter::_null(ItemStack* a) const {
-    return a->type() == nullptr;
+bool Inventory::InventorySorter::_null(const unsigned int& a) const {
+    return (inv->_slots + a)->type() == nullptr;
 }
 
-bool Inventory::InventorySorter::_alphabet(ItemStack* a, ItemStack* b) const {
-    return a->type()->name() < b->type()->name();
+bool Inventory::InventorySorter::_alphabet(const unsigned int& a, const unsigned int& b) const {
+    return (inv->_slots + a)->type()->name() < (inv->_slots + b)->type()->name();
 }
 
-bool Inventory::InventorySorter::_stack_size(ItemStack* a, ItemStack* b) const {
-    return a->length() > b->length();
+bool Inventory::InventorySorter::_stack_size(const unsigned int& a, const unsigned int& b) const {
+    return (inv->_slots + a)->length() > (inv->_slots + b)->length();
 }
 
-bool Inventory::InventorySorter::_stack_level(ItemStack* a, ItemStack* b) const {
-    return a->min_level() > b->min_level();
+bool Inventory::InventorySorter::_stack_level(const unsigned int& a, const unsigned int& b) const {
+    return (inv->_slots + a)->min_level() > (inv->_slots + b)->min_level();
 }
 
-int Inventory::InventorySorter::_inv_count(ItemStack* a, ItemStack* b) const {
-    return inv->count_individual(a->type()) - inv->count_individual(b->type());
+int Inventory::InventorySorter::_inv_count(const unsigned int& a, const unsigned int& b) const {
+    return inv->count_individual((inv->_slots + a)->type()) - inv->count_individual((inv->_slots + b)->type());
 }
 
-inline int Inventory::InventorySorter::_kind(ItemStack* a, ItemStack* b, const int first) const {
-    int ka = a->type()->kind(), kb = b->type()->kind();
+inline int Inventory::InventorySorter::_kind(const unsigned int& a, const unsigned int& b, const int first) const {
+    int ka = (inv->_slots + a)->type()->kind(), kb = (inv->_slots + b)->type()->kind();
     if (kb == first) { return 1; }
     if (ka == first) { return -1; }
     if (ka < first && kb > first) { return 1; }

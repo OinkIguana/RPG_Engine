@@ -15,7 +15,7 @@ Message Message::operator+(const Message& o) const {
 std::function<void(Message*, const Point&)> Message::draw_fn = [] (Message* msg, const Point& pos) {
     msg->speaker().draw(pos - Point(0, msg->speaker().height()), GUI_LAYER);
     msg->increment();
-    msg->message().upto(msg->current_pos()).draw(pos, GUI_LAYER);
+    msg->message().draw_upto(msg->current_pos(), pos, GUI_LAYER);
 };
 
 void Message::draw(const Point& pos) {
@@ -43,7 +43,6 @@ void Dialog::import(const std::string& path) {
     getline(file, name);
     while (!file.eof()) {
         int n = 0;
-        Message* msg_list;
         name = name.substr(1, name.length() - 2);
         Dialog* dia = new Dialog(name);
         all_dialogs[name] = dia;
@@ -56,44 +55,49 @@ void Dialog::import(const std::string& path) {
                 }
                 if (line[0] == '[') {
                     name = line;
-                    msg_list = new Message[n];
+                    dia->_messages = new Message*[n];
                     dia->_message_count = n;
                 } else {
-                    Message msg = Message(line.substr(0, line.find(':')), line.substr(line.find(':') + 1));
+                    Message* msg = new Message(line.substr(0, line.find(':')), line.substr(line.find(':') + 1));
                     n++;
                     next();
-                    msg_list[--n] = msg;
+                    dia->_messages[--n] = msg;
                 }
             })();
         }
-        dia->_messages = msg_list;
     }
 }
 
 void Dialog::next() {
     if (_on_display != nullptr) {
-        if (_on_display->current().current_pos() < _on_display->current().message().length()) {
-            _on_display->current().current_pos(_on_display->current().message().length());
+        if (_on_display->current()->current_pos() < _on_display->current()->message().length()) {
+            // Skip to end
+            _on_display->current()->current_pos(_on_display->current()->message().length());
+        } else if (_on_display->_current_message + 1 < _on_display->_message_count) {
+            // Go to next message
+            _on_display->_current_message++;
+            _on_display->current()->current_pos(0);
         } else {
-            if (_on_display->_current_message + 1 < _on_display->_message_count) {
-                _on_display->_current_message++;
-                _on_display->current().current_pos(0);
-            } else {
-                _on_display = nullptr;
-            }
+            // Quit
+            _on_display = nullptr;
         }
     }
 }
 
 std::function<void(Dialog*)> Dialog::draw_fn = [] (Dialog* dialog) {
     Rect box = Rect(0, WINDOW_HEIGHT - 150, WINDOW_WIDTH, 150);
-    draw::set_color(Color(0xFF, 0xFF, 0xFF, 0x33));
-    draw::rect(box, GUI_LAYER);
-    dialog->current().draw(Point(0, WINDOW_HEIGHT - 150));
+    draw::set_color(Color(0xEE, 0xEE, 0xEE, 0x33));
+    draw::rect(box, GUI_LAYER - 1);
+    dialog->current()->draw(Point(0, WINDOW_HEIGHT - 150));
 };
 
 void Dialog::draw() {
     if (_on_display != nullptr) {
         draw_fn(_on_display);
     }
+}
+
+Dialog::~Dialog() {
+    for (unsigned int i = 0; i < _message_count; i++) { delete _messages[i]; }
+    delete[] _messages;
 }

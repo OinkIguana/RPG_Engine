@@ -20,7 +20,6 @@ Font* Font::get(const std::string& name) {
     }
 }
 
-
 Font* Font::get(const std::string& name, const unsigned int& size, const std::string& file) {
     auto old = all_fonts.find(name);
     if (old != all_fonts.end()) {

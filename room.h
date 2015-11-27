@@ -15,7 +15,7 @@ public:
     inline unsigned int height() const { return _height; }
 
     // Add one room to the list of rooms
-    template<class T>
+    template<typename T>
     static void add_room();
 
     // Instantiates the rooms
@@ -41,7 +41,7 @@ private:
     static Room* current_room;
 };
 
-template<class T>
+template<typename T>
 inline void Room::add_room() {
     Room* rm = new T();
     all_rooms[rm->name()] = rm;

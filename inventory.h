@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <functional>
 #include "stats.h"
+#include "util.h"
 
 const unsigned int DEFAULT_MAX_STACK = 99;
 
@@ -217,12 +218,12 @@ public:
         template<typename SortFunction>
         inline void custom(SortFunction f) { _sort(f); }
     private:
-        bool _null(ItemStack*) const;
-        bool _alphabet(ItemStack*, ItemStack*) const;
-        bool _stack_size(ItemStack*, ItemStack*) const;
-        bool _stack_level(ItemStack*, ItemStack*) const;
-        int _inv_count(ItemStack*, ItemStack*) const;
-        int _kind(ItemStack*, ItemStack*, const int = 0) const;
+        bool _null(const unsigned int&) const;
+        bool _alphabet(const unsigned int&, const unsigned int&) const;
+        bool _stack_size(const unsigned int&, const unsigned int&) const;
+        bool _stack_level(const unsigned int&, const unsigned int&) const;
+        int _inv_count(const unsigned int&, const unsigned int&) const;
+        int _kind(const unsigned int&, const unsigned int&, const int = 0) const;
 
         template<typename SortFunction>
         // Do the sorting based on the given function
@@ -257,13 +258,14 @@ void Inventory::InventorySorter::_sort(SortFunction ok) {
     for (unsigned int i = 0; i < inv->_length; i++) {
         locations[i] = i;
     }
-    {   //Sort list of locations by the contents
-        std::function<void(unsigned int[], const unsigned int)> qs;
-        (qs = [&qs, &ok, this](unsigned int part[], const unsigned int len) -> void {
+    util::quicksort<unsigned int>(locations, inv->_length, ok);
+    /*{
+        std::function<void(unsigned int*, unsigned int)> qs;
+        (qs = [this, &ok, &qs] (unsigned int * part, unsigned int len) -> void {
             unsigned int * left = new unsigned int[len - 1];
             unsigned int * right = new unsigned int[len - 1];
             unsigned int il = 0, ir = 0;
-            const unsigned int pivot = part[len - 1];
+            unsigned int pivot = part[len - 1];
             for (unsigned int i = 0; i < len - 1; i++) {
                 if (ok(inv->_slots + part[i], inv->_slots + pivot)) {
                     left[il++] = part[i];
@@ -282,13 +284,16 @@ void Inventory::InventorySorter::_sort(SortFunction ok) {
                     part[i] = right[i - il - 1];
                 }
             }
+            delete[] left;
+            delete[] right;
         })(locations, inv->_length);
-    }
+    }*/
     //Reorder real list's contents in the order of the locations
     ItemStack* oldSlots = inv->_slots;
     inv->_slots = new ItemStack[inv->_length];
     for (unsigned int i = 0; i < inv->_length; i++) {
         inv->_slots[i] += oldSlots[locations[i]];
     }
+    delete[] locations;
     delete[] oldSlots;
 }

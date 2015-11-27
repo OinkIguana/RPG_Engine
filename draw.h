@@ -2,17 +2,20 @@
 
 #include <SDL.h>
 #include "types.h"
+#include "util.h"
 
 class draw {
 public:
     // Draw an entire texture stretched to fill a given space
-    static void texture(const Rect& p, const int& depth, SDL_Texture* tex);
+    static void texture(const Rect& p, const int& depth, SDL_Texture* tex, const bool& temp = false);
     // Draw an entire texture at the given point
-    static void texture(const Point& p, const int& depth, SDL_Texture* tex);
+    static void texture(const Point& p, const int& depth, SDL_Texture* tex, const bool& temp = false);
     // Draw part of the texture at the given point
-    static void texture_part(const Point& p, const int& depth, SDL_Texture* tex, const Rect& src);
+    static void texture_part(const Point& p, const int& depth, SDL_Texture* tex, const Rect& src, const bool& temp = false);
     // Draw a surface at the given point
     static void surface(const Point& p, const int& depth, SDL_Surface* surf);
+    // Draw a surface stretched to fill a given space
+    static void surface(const Rect& p, const int& depth, SDL_Surface* surf);
     // Clear the screen
     static void clear();
     // Present the image to the screen

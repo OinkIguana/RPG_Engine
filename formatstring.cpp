@@ -15,12 +15,12 @@ FormatString::FormatString(const std::string& raw, const int& width) : _raw(raw)
     unsigned int chunk_start = 0;
     std::string prev_chunk = "";
     (next = [&](const unsigned int start, const unsigned int iteration) {
-        FormatString::_Piece piece;
-        piece.color = col_prev;
-        piece.font = font_prev;
-        piece.text = "";
-        piece.x = line_x;
-        piece.y = line_y;
+        _Piece* piece = new _Piece();
+        piece->color = col_prev;
+        piece->font = font_prev;
+        piece->text = "";
+        piece->x = line_x;
+        piece->y = line_y;
         prev_chunk = "";
         bool escape = false, color = false, font = false;
         unsigned int i = start, delay = 0;
@@ -29,15 +29,15 @@ FormatString::FormatString(const std::string& raw, const int& width) : _raw(raw)
             //Font and color can be set if no text has been collected yet
             if (color) {
                 auto found = _color_map.find(_raw[i]);
-                piece.color = (found != _color_map.end() ? found->second : 0x000000);
-                col_prev = piece.color;
+                piece->color = (found != _color_map.end() ? found->second : 0x000000);
+                col_prev = piece->color;
                 color = false;
                 continue;
             }
             if (font) {
                 auto found = _font_map.find(_raw[i]);
-                piece.font = (found != _font_map.end() ? found->second : Font::get());
-                font_prev = piece.font;
+                piece->font = (found != _font_map.end() ? found->second : Font::get());
+                font_prev = piece->font;
                 font = false;
                 continue;
             }
@@ -62,75 +62,75 @@ FormatString::FormatString(const std::string& raw, const int& width) : _raw(raw)
                 break;
             case FormatString::SYM::VAR: /* skip var char */ break;
             case FormatString::SYM::WAIT:
-                if (piece.text.length() != 0) {
+                if (piece->text.length() != 0) {
                     goto next_piece;
                 }
                 ++delay;
                 ++_total_wait;
                 break;
             case FormatString::SYM::COLOR:
-                if (piece.text.length() != 0) {
+                if (piece->text.length() != 0) {
                     goto next_piece;
                 }
                 color = true;
                 break;
             case FormatString::SYM::FONT:
-                if (piece.text.length() != 0) {
+                if (piece->text.length() != 0) {
                     goto next_piece;
                 }
                 font = true;
                 break;
             case ' ': //Move the word wrap point forward
             case '-':
-                prev_chunk = piece.text;
+                prev_chunk = piece->text;
                 chunk_start = i + 1;
             default: //Regular characters
                 _text += _raw[i];
-                piece.text += _raw[i];
+                piece->text += _raw[i];
             }
             int width, height;
-            piece.font->dimensions(piece.text, width, height);
+            piece->font->dimensions(piece->text, width, height);
             _height = std::max(_height, line_y + height);
-            if (_width != -1 && piece.x + width > _width) {
+            if (_width != -1 && piece->x + width > _width) {
                 //Wrap words when they get too long
                 i = chunk_start;
-                piece.text = prev_chunk;
+                piece->text = prev_chunk;
                 line_x = 0;
                 line_y = _height;
                 goto next_piece;
             } else {
-                line_x = piece.x + width;
+                line_x = piece->x + width;
             }
         }
     next_piece:
         //Record total width and previous width for word-wrapping
         int width, height;
-        piece.font->dimensions(piece.text, width, height);
-        max_width = std::max(max_width, piece.x + width);
+        piece->font->dimensions(piece->text, width, height);
+        max_width = std::max(max_width, piece->x + width);
         if (i != _raw.length()) {
             next(i, iteration + 1);
         } else {
-            _pieces = new FormatString::_Piece[iteration + 1];
+            _pieces = new FormatString::_Piece*[iteration + 1];
             _length = iteration + 1;
         }
-
         _pieces[iteration] = piece;
     })(0, 0);
     _width = max_width;
 }
 
 FormatString::~FormatString() {
+    for (unsigned int i = 0; i < _length; i++) { delete _pieces[i]; }
+    delete[] _pieces;
     SDL_DestroyTexture(_tex);
-    _tex = NULL;
 }
 
-void FormatString::draw(const Point& p, const int& depth) {
+void FormatString::draw(const Point& pos, const int& depth) {
     if (_tex == NULL) {
         SDL_Surface* surf = SDL_CreateRGBSurface(0, _width, _height, 32, RMASK, GMASK, BMASK, AMASK);
         for (unsigned int i = 0; i < _length; i++) {
             try {
-                SDL_Surface* piece = _pieces[i].font->to_surface(_pieces[i].text, _pieces[i].color);
-                SDL_Rect pos = Rect(_pieces[i].x, _pieces[i].y, piece->w, piece->h);
+                SDL_Surface* piece = _pieces[i]->font->to_surface(_pieces[i]->text, _pieces[i]->color);
+                SDL_Rect pos = Rect(_pieces[i]->x, _pieces[i]->y, piece->w, piece->h);
                 SDL_BlitSurface(piece, NULL, surf, &pos);
                 SDL_FreeSurface(piece);
             } catch (int) {};
@@ -138,7 +138,36 @@ void FormatString::draw(const Point& p, const int& depth) {
         _tex = SDL_CreateTextureFromSurface(RPG::game_renderer(), surf);
         SDL_FreeSurface(surf);
     }
-    draw::texture(p, depth, _tex);
+    draw::texture(pos, depth, _tex);
+}
+
+void FormatString::draw_upto(const unsigned int& end, const Point& pos, const int& depth) {
+    if (end == _text.length()) return draw(pos, depth);
+    SDL_Surface* surf = SDL_CreateRGBSurface(0, _width, _height, 32, RMASK, GMASK, BMASK, AMASK);
+    std::string raw = "";
+    std::string text = "";
+    for (unsigned int i = 0; i < _length; i++) {
+        std::string seg = "";
+        while (seg.length() < _pieces[i]->text.length() && text.length() < end) {
+            seg += _text[text.length()];
+            text += _text[text.length()];
+            do {
+                raw += _raw[raw.length()];
+            } while (_raw[raw.length()] != _text[text.length()]);
+        }
+        if (seg != "") {
+            try {
+                SDL_Surface* piece = _pieces[i]->font->to_surface(seg, _pieces[i]->color);
+                SDL_Rect pos { (int)_pieces[i]->x, (int)_pieces[i]->y, piece->w, piece->h };
+                SDL_BlitSurface(piece, NULL, surf, &pos);
+                SDL_FreeSurface(piece);
+            } catch (int) {};
+        } else {
+            break;
+        }
+    }
+    draw::surface(pos, depth, surf);
+    SDL_FreeSurface(surf);
 }
 
 FormatString FormatString::upto(const unsigned int& count) const {

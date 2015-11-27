@@ -52,21 +52,21 @@ public:
     // Progress to the next message in the current Dialog
     static void next();
     // Get the current message
-    inline Message& current() { return _messages[_current_message]; }
+    inline Message* current() { return _messages[_current_message]; }
     // Get the message count
     inline unsigned int length() const { return _message_count; }
 
     // Run through this dialog
-    inline void start() { _current_message = 0; _messages[_current_message].current_pos(0); _on_display = this; }
+    inline void start() { _current_message = 0; _messages[_current_message]->current_pos(0); _on_display = this; }
 
     static void draw();
     static std::function<void(Dialog*)> draw_fn;
 
-    ~Dialog() { delete _messages; }
+    ~Dialog();
 private:
     // Dialog must be imported
     Dialog(const std::string& name) : _name(name) {}
-	Message* _messages;
+	Message ** _messages;
 	unsigned int _current_message;
     unsigned int _message_count;
     const std::string _name;
