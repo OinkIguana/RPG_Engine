@@ -79,6 +79,6 @@ draw::Carry** draw::Carry::extract_all(Carry* first, unsigned int& size) {
     size = _size;
     Carry** list = new Carry*[size];
     first->extract(list);
-    util::quicksort<Carry*>(list, size, [](Carry* a, Carry* b) { return a->_depth < b->_depth; });
+    util::mergesort<Carry*>(list, size, [](Carry* a, Carry* b) { return a->_depth < b->_depth; });
     return list;
 }
