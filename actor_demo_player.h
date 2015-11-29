@@ -7,9 +7,9 @@
 */
 class Player : public Actor {
 public:
-    Player() : Actor() {
-        _sprite = Sprite::get("walk_cat");
-    }
+    Player();
     virtual void key_down(const SDL_Scancode&);
     virtual void step();
+private:
+    Sequence<unsigned int> _frame_sequence = Sequence<unsigned int>(16, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1);
 };

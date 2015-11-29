@@ -34,6 +34,8 @@ public:
 
     static void process_events();
     static void step();
+    // Skips execution of the rest of the step event by forgetting all actors
+    inline static void skip_step() { _actors.length = 0; }
     static void draw();
     inline static Keystate key(const SDL_Scancode& key) { return _keys[key]; }
 private:
@@ -44,10 +46,8 @@ private:
     } _actors;
 
     inline static void _each_actor(std::function<void(Actor*)> f) {
-        if (_actors.length) {
-            for (unsigned int i = 0; i < _actors.length; i++) {
-                f(_actors[i]);
-            }
+        for (unsigned int i = 0; i < _actors.length; i++) {
+            f(_actors[i]);
         }
     }
 
@@ -56,5 +56,8 @@ private:
     static int _num_keys;
     static const Uint8* _sdl_keys;
     static Keystate* _keys;
+    static Keystate* _mouse;
+    static Point _mouse_pos;
     static bool _done;
+    static bool _skip_step;
 };

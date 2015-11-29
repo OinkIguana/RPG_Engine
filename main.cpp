@@ -56,7 +56,8 @@ void game() {
     Stat::import("test.stats");
     Room::import();
 
-    Room::get("demo")->go_to();
+    Room::get("demo_inside")->go_to();
+    Actor::create<Player>()->pos(Point(192, 192));
 
     //Do the game stuff
     while (!RPG::is_done()) {

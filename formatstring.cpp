@@ -130,8 +130,8 @@ void FormatString::draw(const Point& pos, const int& depth) {
         for (unsigned int i = 0; i < _length; i++) {
             try {
                 SDL_Surface* piece = _pieces[i]->font->to_surface(_pieces[i]->text, _pieces[i]->color);
-                SDL_Rect pos = Rect(_pieces[i]->x, _pieces[i]->y, piece->w, piece->h);
-                SDL_BlitSurface(piece, NULL, surf, &pos);
+                SDL_Rect posn = Rect(_pieces[i]->x, _pieces[i]->y, piece->w, piece->h);
+                SDL_BlitSurface(piece, NULL, surf, &posn);
                 SDL_FreeSurface(piece);
             } catch (int) {};
         }
@@ -158,8 +158,8 @@ void FormatString::draw_upto(const unsigned int& end, const Point& pos, const in
         if (seg != "") {
             try {
                 SDL_Surface* piece = _pieces[i]->font->to_surface(seg, _pieces[i]->color);
-                SDL_Rect pos { (int)_pieces[i]->x, (int)_pieces[i]->y, piece->w, piece->h };
-                SDL_BlitSurface(piece, NULL, surf, &pos);
+                SDL_Rect posn { (int)_pieces[i]->x, (int)_pieces[i]->y, piece->w, piece->h };
+                SDL_BlitSurface(piece, NULL, surf, &posn);
                 SDL_FreeSurface(piece);
             } catch (int) {};
         } else {

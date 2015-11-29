@@ -5,6 +5,8 @@
 #include <string>
 #include <map>
 #include <fstream>
+#include <cstdarg>
+#include <iostream>
 
 struct Point;
 struct Pointf;
@@ -214,4 +216,37 @@ struct Color {
 
     inline operator unsigned int() const { return (r << 16) + (g << 8) + b; }
     inline operator SDL_Color() const { return { r, g, b, a }; }
+};
+
+template<typename T>
+// A sequence of values which can be accessed in one direction
+struct Sequence {
+    Sequence(const unsigned int len, ...) : _length(len) {
+        va_list seq;
+        va_start(seq, len);
+        _values = new T[len];
+        for (unsigned int i = 0; i < len; i++) {
+            _values[i] = va_arg(seq, T);
+        }
+        va_end(seq);
+    }
+    ~Sequence() { delete[] _values; }
+
+    // Go forward a value
+    inline T operator++() { return _values[(_index = (_index + 1) % length()) / _stretch]; }
+    // Go back a value
+    inline T operator--() { return _values[(_index = (_index - 1 + length()) % length()) / _stretch]; }
+    // Change the index
+    inline T operator=(const unsigned int& i) { return _values[(_index = i % length()) / _stretch]; }
+    
+    // Access a value at an index
+    inline T operator[](const unsigned int& i) const { return _values[(i % length()) / _stretch]; }
+
+    inline operator T() { return _values[_index / _stretch]; }
+    inline unsigned int length() const { return _length * _stretch; }
+private:
+    T * _values;
+    const unsigned int _length;
+    unsigned int _index = 0;
+    unsigned int _stretch = 1;
 };

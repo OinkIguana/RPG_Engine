@@ -136,7 +136,8 @@ void Sprite::import(const std::string& path) {
             switch (field) {
             case 'f':
                 file >> x >> y >> w >> h;
-                frame = new Rect(x, y, w, h);
+                frame = new Rect[1];
+                frame[0] = Rect(x, y, w, h);
                 break;
             case 'b':
                 file >> x >> y >> w >> h;
@@ -175,7 +176,7 @@ void Sprite::import(const std::string& path) {
             }
         }
 
-        delete frame;
+        delete[] frame;
         delete bound;
         delete sep;
     }

@@ -15,14 +15,16 @@ public:
     inline unsigned int height() const { return _height; }
 
     // Add one room to the list of rooms
-    template<typename T>
-    static void add_room();
+    inline static void add_room(Room* rm) { all_rooms[rm->name()] = rm; }
 
     // Instantiates the rooms
     static void import();
 
     // End the current room and start the next
     void go_to();
+
+    inline static Room* current_room() { return _current_room; }
+    inline static Room* previous_room() { return _previous_room; }
 protected:
     Room(const std::string& name, const int& width, const int& height) : _name(name), _width(width), _height(height){};
     const std::string _name;
@@ -38,11 +40,6 @@ private:
     void end();
 
     static std::map<std::string, Room*> all_rooms;
-    static Room* current_room;
+    static Room* _current_room;
+    static Room* _previous_room;
 };
-
-template<typename T>
-inline void Room::add_room() {
-    Room* rm = new T();
-    all_rooms[rm->name()] = rm;
-}

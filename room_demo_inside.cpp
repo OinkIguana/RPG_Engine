@@ -1,12 +1,12 @@
 #include "room.h"
 
-class RM_demo : public Room {
+class RM_demo_inside : public Room {
     friend class Room;
 private:
-    RM_demo() : Room("demo", 1024, 1024) {}
+    RM_demo_inside() : Room("demo_inside", 1024, 1024) {}
     virtual void tiles() {
         Background* bg[4];
-        Tile * tiles_0[154] = {
+        Tile * tiles_0[177] = {
             new Tile(Image::get("house"),
                     Point(64, 192),
                     Rect(0, 128, 32, 32)),
@@ -296,9 +296,6 @@ private:
                     Point(640, 448),
                     Rect(0, 128, 32, 32)),
             new Tile(Image::get("house"),
-                    Point(608, 448),
-                    Rect(0, 128, 32, 32)),
-            new Tile(Image::get("house"),
                     Point(576, 448),
                     Rect(0, 128, 32, 32)),
             new Tile(Image::get("house"),
@@ -469,9 +466,81 @@ private:
             new Tile(Image::get("house"),
                     Point(352, 224),
                     Rect(32, 0, 32, 128)),
+            new Tile(Image::get("house"),
+                    Point(608, 448),
+                    Rect(0, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(544, 480),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(576, 480),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(608, 480),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(640, 544),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(608, 544),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(576, 512),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(544, 512),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(608, 512),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(640, 512),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(576, 544),
+                    Rect(32, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(512, 480),
+                    Rect(0, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(512, 512),
+                    Rect(0, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(544, 544),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(512, 544),
+                    Rect(0, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(576, 576),
+                    Rect(32, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(608, 576),
+                    Rect(32, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(640, 576),
+                    Rect(32, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(544, 576),
+                    Rect(0, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(672, 576),
+                    Rect(64, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(672, 544),
+                    Rect(64, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(672, 480),
+                    Rect(64, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(672, 512),
+                    Rect(64, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(640, 480),
+                    Rect(32, 96, 32, 32)),
         };
-        bg[0] = new Background(154, tiles_0, 0);
-        for(unsigned int i = 0; i < 154; i++) {
+        bg[0] = new Background(177, tiles_0, 0);
+        for(unsigned int i = 0; i < 177; i++) {
             delete tiles_0[i];
         }
         Tile * tiles_100[25] = {
@@ -509,15 +578,6 @@ private:
                     Point(544, 384),
                     Rect(32, 0, 32, 96)),
             new Tile(Image::get("house"),
-                    Point(576, 384),
-                    Rect(32, 0, 32, 96)),
-            new Tile(Image::get("house"),
-                    Point(608, 384),
-                    Rect(32, 0, 32, 96)),
-            new Tile(Image::get("house"),
-                    Point(640, 384),
-                    Rect(32, 0, 32, 96)),
-            new Tile(Image::get("house"),
                     Point(672, 384),
                     Rect(32, 0, 32, 96)),
             new Tile(Image::get("house"),
@@ -550,6 +610,15 @@ private:
             new Tile(Image::get("house"),
                     Point(480, 384),
                     Rect(96, 32, 32, 96)),
+            new Tile(Image::get("house"),
+                    Point(576, 384),
+                    Rect(32, 0, 32, 96)),
+            new Tile(Image::get("house"),
+                    Point(640, 384),
+                    Rect(32, 0, 32, 96)),
+            new Tile(Image::get("house"),
+                    Point(608, 416),
+                    Rect(256, 0, 32, 64)),
         };
         bg[1] = new Background(25, tiles_100, 100);
         for(unsigned int i = 0; i < 25; i++) {
@@ -570,7 +639,7 @@ private:
         for(unsigned int i = 0; i < 3; i++) {
             delete tiles_1[i];
         }
-        Tile * tiles_99[5] = {
+        Tile * tiles_99[6] = {
             new Tile(Image::get("house"),
                     Point(352, 256),
                     Rect(0, 0, 32, 96)),
@@ -586,16 +655,19 @@ private:
             new Tile(Image::get("house"),
                     Point(480, 256),
                     Rect(64, 0, 32, 96)),
+            new Tile(Image::get("house"),
+                    Point(608, 384),
+                    Rect(32, 0, 32, 96)),
         };
-        bg[3] = new Background(5, tiles_99, 99);
-        for(unsigned int i = 0; i < 5; i++) {
+        bg[3] = new Background(6, tiles_99, 99);
+        for(unsigned int i = 0; i < 6; i++) {
             delete tiles_99[i];
         }
     }
     virtual void actors() {
-        Actor::create<NPC>()->pos({256, 320});
-        Actor::create<NPC>()->pos({640, 320});
-        Actor::create<Player>()->pos({128, 320});
+        Actor::create<Door>("demo_outside")->pos({608, 496});
+        Actor::create<HelloCat>()->pos({256, 256});
+        Actor::create<ByeCat>()->pos({640, 320});
         Actor::create<Wall>()->pos({32, 480});
         Actor::create<Wall>()->pos({32, 448});
         Actor::create<Wall>()->pos({64, 480});
@@ -647,7 +719,6 @@ private:
         Actor::create<Wall>()->pos({704, 480});
         Actor::create<Wall>()->pos({672, 480});
         Actor::create<Wall>()->pos({640, 480});
-        Actor::create<Wall>()->pos({608, 480});
         Actor::create<Wall>()->pos({576, 480});
         Actor::create<Wall>()->pos({544, 480});
         Actor::create<Wall>()->pos({512, 480});

@@ -6,8 +6,11 @@ SDL_Window* RPG::_game_window;
 SDL_Renderer* RPG::_game_renderer;
 bool RPG::_done = false;
 RPG::Keystate* RPG::_keys = nullptr;
+RPG::Keystate* RPG::_mouse = nullptr;
+Point RPG::_mouse_pos = Point(0, 0);
 const Uint8* RPG::_sdl_keys = nullptr;
 int RPG::_num_keys = 0;
+bool RPG::_skip_step = false;
 
 void RPG::init() {
     _game_window = SDL_CreateWindow("Untitled RPG", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
@@ -24,6 +27,7 @@ void RPG::init() {
     for (int i = 0; i < _num_keys; i++) {
         _keys[i] = Keystate::RELEASED;
     }
+    _mouse = new Keystate[5]{ Keystate::RELEASED };
 }
 
 void RPG::exit() {
@@ -47,14 +51,25 @@ void RPG::process_events() {
                 _each_actor([e](Actor* act) { act->key_up(e.key.keysym.scancode); });
             }
             break;
+        case SDL_MOUSEBUTTONDOWN:
+            if (_mouse[e.button.button] == Keystate::RELEASED) {
+                _mouse_pos = Point(e.button.x, e.button.y);
+                _mouse[e.button.button] = Keystate::PRESSED;
+                _each_actor([e](Actor* act) { act->mouse_down(e.button.button); });
+            }
+            break;
+        case SDL_MOUSEBUTTONUP:
+            if (_mouse[e.button.button] == Keystate::PRESSED) {
+                _mouse[e.button.button] = Keystate::RELEASED;
+                _each_actor([e](Actor* act) { act->mouse_up(e.button.button); });
+            }
+            break;
+        case SDL_MOUSEWHEEL:
+            _each_actor([e](Actor* act) { act->mouse_wheel(Point(e.wheel.x, e.wheel.y)); });
+            break;
         case SDL_QUIT: 
             quit();
             break;
-        }
-    }
-    for (int i = 0; i < _num_keys; i++) {
-        if (_keys[i] == Keystate::PRESSED) {
-            _each_actor([i](Actor* act) { act->key((SDL_Scancode) i); });
         }
     }
 }
@@ -69,8 +84,9 @@ void RPG::step() {
 }
 
 void RPG::draw() {
+    // Update actor list
     unsigned int count;
-    Background** bgs = Background::get_temps(&count);
+    Background** bgs = Background::get_room_bgs(&count);
     for (unsigned int i = 0; i < count; i++) {
         bgs[i]->draw(); 
     }

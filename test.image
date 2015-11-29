@@ -1,3 +1,6 @@
 cat "cat.png"
 wall "wall.png"
 house "house.png"
+house_out "house_out.png"
+grass "grass.png"
+dirt "dirt.png"

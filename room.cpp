@@ -1,7 +1,8 @@
 #include "room.h"
 
 std::map<std::string, Room*> Room::all_rooms = std::map<std::string, Room*>();
-Room* Room::current_room = nullptr;
+Room* Room::_current_room = nullptr;
+Room* Room::_previous_room = nullptr;
 
 Room * Room::get(const std::string& name) {
     auto old = all_rooms.find(name);
@@ -17,10 +18,12 @@ Room::~Room() {
 }
 
 void Room::go_to() {
-    if (current_room != nullptr) {
-        current_room->end();
+    RPG::skip_step();
+    if (_current_room != nullptr) {
+        _current_room->end();
+        _previous_room = _current_room;
     }
-    current_room = this;
+    _current_room = this;
     start();
 }
 
@@ -32,5 +35,6 @@ void Room::start() {
 
 void Room::end() {
     on_room_end();
-    Background::clear_temp();
+    Actor::clear();
+    Background::remove_room_bgs();
 }

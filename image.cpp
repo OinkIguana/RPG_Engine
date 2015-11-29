@@ -71,12 +71,9 @@ Image::Image(const std::string& name, const std::string& file) : _name(name), _f
 }
 
 Image::Image(const std::string& name, const unsigned int& n, Tile** tiles) : _name(name) {
-    Rect pos;
-    {   // Get the final dimensions/position of the background
-        std::function<Rect(Tile**, const unsigned int&)> merge;
-        pos = (merge = [&merge](Tile** tiles, const unsigned int& n) {
-            return (n == 0) ? tiles[0]->pos() : tiles[n]->pos() | merge(tiles, n - 1);
-        })(tiles, n - 1);
+    Rect pos = tiles[0]->pos();
+    for (unsigned int i = 0; i < n; i++) {
+        pos = pos | tiles[i]->pos();
     }
     _surf = SDL_CreateRGBSurface(0, pos.w, pos.h, 32, RMASK, GMASK, BMASK, AMASK);
     if (_surf == NULL) { throw 1; }
