@@ -13,10 +13,11 @@ KEY=4
 desc=A delicious apple
 buy=10
 sell=5
-max_stack=15
+max_stack=2
 attributes=CONSUMABLE
 kind=FOOD
 stats=HP+:10
+image=apple
 
 [Sword]
 desc=A sword for cutting things

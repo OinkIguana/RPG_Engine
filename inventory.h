@@ -5,6 +5,7 @@
 #include <fstream>
 #include <algorithm>
 #include <functional>
+#include "sprite.h"
 #include "stats.h"
 #include "util.h"
 
@@ -24,7 +25,7 @@ public:
     static ItemType* get(   const std::string name, const std::string desc = "",
                             const int buy = 0, const int sell = 0, const unsigned int stack = DEFAULT_MAX_STACK,
                             const unsigned int attr = 0, const unsigned int kind = 0, const unsigned int rarity = 0,
-                            const StatList base_stats = StatList());
+                            const StatList base_stats = StatList(), Sprite* sprite = nullptr);
     inline ~ItemType() { all_types.erase(_name); }
     /*
         Import item types from a file similar to an ini file:
@@ -41,6 +42,8 @@ public:
         kind=_kind
         rarity=_rarity
         stats=_base_stats
+        image=_sprite
+
         [_name]
                     ...
         ---------------------------
@@ -61,13 +64,14 @@ public:
     inline unsigned int kind() const        { return _kind; }
     inline int rarity() const               { return _rarity; }
     inline StatList base_stats() const      { return _base_stats; }
+    inline Sprite* sprite() const           { return _sprite; }
 private:
     // Create the new ItemType
     ItemType(   const std::string name, const std::string desc = "",
                 const int buy = 0, const int sell = 0, const unsigned int max_stack = DEFAULT_MAX_STACK,
                 const unsigned int attributes = 0, const unsigned int kind = 0, const unsigned int rarity = 0,
-                const StatList base_stats = StatList())
-        : _name(name), _desc(desc), _price{ buy, sell }, _max_stack(max_stack), _attributes(attributes), _kind(kind), _rarity(rarity), _base_stats(base_stats) {}
+                const StatList base_stats = StatList(), Sprite* sprite = nullptr)
+        : _name(name), _desc(desc), _price{ buy, sell }, _max_stack(max_stack), _attributes(attributes), _kind(kind), _rarity(rarity), _base_stats(base_stats), _sprite(sprite) {}
 
     const std::string   _name;
     const std::string   _desc;
@@ -77,6 +81,7 @@ private:
     const unsigned int  _kind;
     const StatList      _base_stats;
     const int           _rarity;
+    Sprite*             _sprite;
 
     static std::map<std::string, ItemType*> all_types;
 };

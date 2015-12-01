@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+#include <stack>
 #include "types.h"
 #include "sprite.h"
 #include "config.h"
@@ -7,7 +9,7 @@
 /*
     Base for an Actor
     For use with the room editor, an Actor must have this line in the file somewhere:
-    #Actor: name image [depth [args]]
+    #Actor: name image [depth [arg_count]]
 */
 class Actor {
 public:
@@ -18,6 +20,7 @@ public:
     static unsigned int count();
     // Get an array of pointers to all Actors of type T.
     // count is set to the length of the array
+    // Calls new[], so delete[] when finished
     template<typename T>
     static T** all(unsigned int* count = nullptr);
 
@@ -33,8 +36,10 @@ public:
     template<typename T>
     inline static T* create(const std::string& arg) { return new T(arg); }
 
-    // Destroys the given Actor
-    inline static void destroy(Actor* p) { delete p; }
+    // Queues the given actor for destruction
+    inline static void destroy(Actor* p) { to_destroy.push(p); }
+    // Destroys all actors in the queue. Returns true if there were objects destroyed
+    static bool do_destroy();
 
     virtual void key_down(const SDL_Scancode& key) {};
     virtual void key_up(const SDL_Scancode& key) {};
@@ -89,20 +94,22 @@ protected:
     // Determines if the current Actor would collide with another at a given position
     inline bool collides(Actor* o, const Point& p) const { return ((bbox() >> p) & o->bbox()) != Rect::no_box; }
     // Determines if the current Actor collides with any of the others
-    inline bool collides(Actor** o, const unsigned int& n) const { for (unsigned int i = 0; i < n; i++) { if(collides(o[i])) return true; } return false; }
+    inline Actor* collides(Actor** o, const unsigned int& n) const { for (unsigned int i = 0; i < n; i++) { if(collides(o[i])) return o[i]; } return nullptr; }
     // Determines if the current Actor would collide with any of the others at a given position
-    inline bool collides(Actor** o, const unsigned int& n, const Point& p) const { for (unsigned int i = 0; i < n; i++) { if (collides(o[i], p)) return true; } return false; }
+    inline Actor* collides(Actor** o, const unsigned int& n, const Point& p) const { for (unsigned int i = 0; i < n; i++) { if (collides(o[i], p)) return o[i]; } return nullptr; }
     // Determines if the current Actor collides with any of a type
     template<typename T>
-    inline bool collides() const;
+    inline T* collides() const;
     // Determines if the current Actor would collide with any of a type at a given position
     template<typename T>
-    inline bool collides(const Point& p) const;
+    inline T* collides(const Point& p) const;
 
     // Determines which others the current Actor collides with of a type
+    // Calls new[], so delete[] when finished
     template<typename T>
     inline T ** collides(unsigned int* count) const;
     // Determines which others the current Actor would collide with of a type at a given position
+    // Calls new[], so delete[] when finished
     template<typename T>
     inline T ** collides(const Point& p, unsigned int* count) const;
 
@@ -112,22 +119,26 @@ protected:
     // Determines if the current Actor would lie against another at a given position
     inline bool against(Actor* o, const Point& p) const { return ((bbox() >> p).rs() == o->bbox().x) || ((bbox() >> p).bot() == o->bbox().y) || ((bbox() >> p).x == o->bbox().rs()) || ((bbox() >> p).y == o->bbox().bot()); }
     // Determines if the current Actor lies against any of the others
-    inline bool against(Actor** o, const unsigned int& n) const { for (unsigned int i = 0; i < n; i++) { if (against(o[i])) return true; } return false; }
+    inline Actor* against(Actor** o, const unsigned int& n) const { for (unsigned int i = 0; i < n; i++) { if (against(o[i])) return o[i]; } return nullptr; }
     // Determines if the current Actor would lie against any of the others at a given position
-    inline bool against(Actor** o, const unsigned int& n, const Point& p) const { for (unsigned int i = 0; i < n; i++) { if (against(o[i], p)) return true; } return false; }
+    inline Actor* against(Actor** o, const unsigned int& n, const Point& p) const { for (unsigned int i = 0; i < n; i++) { if (against(o[i], p)) return o[i]; } return nullptr; }
     // Determines if the current Actor lies against any of a type
     template<typename T>
-    inline bool against() const;
+    inline T* against() const;
     // Determines if the current Actor lies against any of a type at a given position
     template<typename T>
-    inline bool against(const Point& p) const;
+    inline T* against(const Point& p) const;
 
     // Determines which Actors the current Actor lies against of a type
+    // Calls new[], so delete[] when finished
     template<typename T>
     inline T ** against(unsigned int* count = nullptr) const;
     // Determines which Actors the current Actor lies against of a type at a given position
+    // Calls new[], so delete[] when finished
     template<typename T>
     inline T ** against(const Point& p, unsigned int* count = nullptr) const;
+
+    operator bool() { return this != nullptr; }
 private:
     const unsigned int _id;
     unsigned int _frame = 0;
@@ -135,6 +146,7 @@ private:
     int _depth = DEFAULT_ACTOR_LAYER;
 
     static std::map<unsigned int, Actor*> all_actors;
+    static std::stack<Actor*> to_destroy;
     static unsigned int c_id;
 };
 
@@ -177,41 +189,37 @@ T** Actor::all(unsigned int* count) {
 }
 
 template<typename T>
-inline bool Actor::collides() const {
-    unsigned int* n = new unsigned int();
-    Actor** a = (Actor**)all<T>(n);
-    bool does = collides(a, *n);
-    delete n;
+inline T* Actor::collides() const {
+    unsigned int n;
+    T ** a = all<T>(&n);
+    T* does = dynamic_cast<T*>(collides((Actor**)a, n));
     delete[] a;
     return does;
 }
 
 template<typename T>
-inline bool Actor::collides(const Point& p) const {
-    unsigned int* n = new unsigned int;
-    Actor** a = (Actor**)all<T>(n);
-    bool does = collides(a, *n, p);
-    delete n;
+inline T* Actor::collides(const Point& p) const {
+    unsigned int n;
+    T ** a = all<T>(&n);
+    T* does = dynamic_cast<T*>(collides((Actor**)a, n, p));
     delete[] a;
     return does;
 }
 
 template<typename T>
-inline bool Actor::against() const {
-    unsigned int* n = new unsigned int();
-    Actor** a = (Actor**)all<T>(n);
-    bool does = against(a, *n);
-    delete n;
+inline T*  Actor::against() const {
+    unsigned int n;
+    T ** a = all<T>(&n);
+    T* does = dynamic_cast<T*>(against((Actor**)a, n));
     delete[] a;
     return does;
 }
 
 template<typename T>
-inline bool Actor::against(const Point& p) const {
-    unsigned int* n = new unsigned int();
-    Actor** a = (Actor**)all<T>(n);
-    bool does = against(a, *n, p);
-    delete n;
+inline T* Actor::against(const Point& p) const {
+    unsigned int n;
+    T ** a = all<T>(&n);
+    T* does = dynamic_cast<T*>(against((Actor**)a, n, p));
     delete[] a;
     return does;
 }
@@ -339,5 +347,3 @@ inline T ** Actor::collides(const Point & p, unsigned int* count) const {
     })();
     return list;
 }
-
-#include "all_actors.h"

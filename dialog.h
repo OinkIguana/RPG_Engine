@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include "config.h"
+#include "audio.h"
 #include "formatstring.h"
 
 #include <iostream>
@@ -19,7 +20,6 @@ public:
     Message operator+(const Message&) const;
     // Produce a plain string containing "Speaker: Message"
     std::string to_string() const { return _speaker.to_string() + ": " + _message.to_string(); }
-    FormatString next() {};
 
     void draw(const Point& pos);
 
@@ -27,7 +27,7 @@ public:
     inline FormatString& message() { return _message; }
     inline unsigned int current_pos() const { return _current_pos; }
     inline void current_pos(const unsigned int& x) { _current_pos = x; }
-    inline void increment(const int& x = 1) { _current_pos = (unsigned int)std::fmin(_current_pos + x, _message.length()); }
+    void increment(const int& x = 1);
 
     static std::function<void(Message*, const Point&)> draw_fn;
 private:
@@ -38,6 +38,7 @@ private:
 
 // An entier Dialog, holding a list of Messages
 class Dialog {
+    friend void Message::increment(const int&);
 public:
     // Get a dialog by its name
     static Dialog* get(const std::string& name);
@@ -57,7 +58,7 @@ public:
     inline unsigned int length() const { return _message_count; }
 
     // Run through this dialog
-    inline void start() { _current_message = 0; _messages[_current_message]->current_pos(0); _on_display = this; }
+    inline void start();
 
     static void draw();
     static std::function<void(Dialog*)> draw_fn;
@@ -66,6 +67,7 @@ public:
 private:
     // Dialog must be imported
     Dialog(const std::string& name) : _name(name) {}
+    static inline void voice() { Audio::voice_stop(); Audio::voice_play(_on_display->_name, _on_display->_current_message); }
 	Message ** _messages;
 	unsigned int _current_message;
     unsigned int _message_count;

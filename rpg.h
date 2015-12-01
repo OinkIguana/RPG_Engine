@@ -34,8 +34,7 @@ public:
 
     static void process_events();
     static void step();
-    // Skips execution of the rest of the step event by forgetting all actors
-    inline static void skip_step() { _actors.length = 0; }
+
     static void draw();
     inline static Keystate key(const SDL_Scancode& key) { return _keys[key]; }
 private:
@@ -59,5 +58,4 @@ private:
     static Keystate* _mouse;
     static Point _mouse_pos;
     static bool _done;
-    static bool _skip_step;
 };

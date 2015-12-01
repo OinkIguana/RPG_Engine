@@ -22,6 +22,12 @@ void Message::draw(const Point& pos) {
     draw_fn(this, pos);
 }
 
+void Message::increment(const int& x) { 
+    if (_current_pos != _message.length()) {
+        _current_pos = (unsigned int)std::fmin(_current_pos + x, _message.length());
+    }
+}
+
 Dialog* Dialog::_on_display = nullptr;
 std::map<std::string, Dialog*> Dialog::all_dialogs = std::map<std::string, Dialog*>();
 
@@ -77,6 +83,7 @@ void Dialog::next() {
             // Go to next message
             _on_display->_current_message++;
             _on_display->current()->current_pos(0);
+            voice();
         } else {
             // Quit
             _on_display = nullptr;
@@ -90,6 +97,13 @@ std::function<void(Dialog*)> Dialog::draw_fn = [] (Dialog* dialog) {
     draw::rect(box, GUI_LAYER - 1);
     dialog->current()->draw(Point(0, WINDOW_HEIGHT - 150));
 };
+
+inline void Dialog::start() { 
+    _current_message = 0; 
+    _messages[_current_message]->current_pos(0); 
+    _on_display = this; 
+    voice();
+}
 
 void Dialog::draw() {
     if (_on_display != nullptr) {

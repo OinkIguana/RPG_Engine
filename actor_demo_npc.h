@@ -1,6 +1,7 @@
 #pragma once
 
 #include "actor.h"
+#include "actor_demo_wall.h"
 #include "dialog.h"
 
 /*

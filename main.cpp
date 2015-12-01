@@ -1,5 +1,6 @@
 #include <iostream>
 #include "rpg.h"
+#include "all_actors.h"
 
 void game();
 void ev_step();
@@ -58,6 +59,7 @@ void game() {
 
     Room::get("demo_inside")->go_to();
     Actor::create<Player>()->pos(Point(192, 192));
+    // Audio::music_play("music");
 
     //Do the game stuff
     while (!RPG::is_done()) {

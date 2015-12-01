@@ -5,10 +5,10 @@ std::map<std::string, ItemType*> ItemType::all_types;
 ItemType * ItemType::get(   const std::string name, const std::string desc,
                             const int buy, const int sell, const unsigned int stack,
                             const unsigned int attributes, const unsigned int kind, const unsigned int rarity,
-                            const StatList base_stats) {
+                            const StatList base_stats, Sprite* sprite) {
     auto old = all_types.find(name);
     if (old == all_types.end()) {
-        all_types[name] = new ItemType(name, desc, buy, sell, stack, attributes, kind, rarity, base_stats);
+        all_types[name] = new ItemType(name, desc, buy, sell, stack, attributes, kind, rarity, base_stats, sprite);
         return all_types[name];
     } else {
         return old->second;
@@ -20,6 +20,7 @@ void ItemType::import(const std::string fname) {
 
     std::string name = "", desc = "";
     int buy = 0, sell = 0, max_stack = 0, attributes = 0, kind = 0, rarity = 0;
+    Sprite* sprite = nullptr;
     StatList base_stats;
     std::map<std::string, int> constants;
 
@@ -28,10 +29,11 @@ void ItemType::import(const std::string fname) {
         std::getline(file, line);
         if (line[0] == '[') {
             if (name != "") {
-                ItemType::get(name, desc, buy, sell, max_stack, attributes, kind, rarity, base_stats);
+                ItemType::get(name, desc, buy, sell, max_stack, attributes, kind, rarity, base_stats, sprite);
                 desc = "";
                 buy = 0, sell = 0, max_stack = 0, attributes = 0, kind = 0, rarity = 0;
-                base_stats -= base_stats;
+                sprite = nullptr;
+                base_stats = StatList();
             }
             name = line.substr(1, line.find(']') - 1);
             continue;
@@ -81,6 +83,9 @@ void ItemType::import(const std::string fname) {
                 break;
             case 'r':
                 rarity = std::stoi(value);
+                break;
+            case 'i':
+                sprite = Sprite::get(value);
                 break;
             }
         }

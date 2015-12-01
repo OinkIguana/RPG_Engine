@@ -20,6 +20,7 @@ public:
     static void remove_room_bgs();
 
     // Gets all temporary backgrounds. count gets filled with the number of backgrounds
+    // Calls new[], so delete[] when finished
     static Background** get_room_bgs(unsigned int* count);
 
     // Draws the background to the screen

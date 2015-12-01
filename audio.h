@@ -2,8 +2,10 @@
 
 #include <map>
 #include <string>
+#include <fstream>
 #include <SDL.h>
 #include <SDL_mixer.h>
+#include <iostream>
 
 #define VOICE_CHANNEL 0
 #define SOUND_CHANNEL 1
@@ -43,6 +45,9 @@ private:
 };
 
 // Base audio
+// Sound effects are played when requested
+// Only one music track can be played at once
+// Voices play automatically when their dialog comes up
 class Audio {
 public:
     static void init();
@@ -51,12 +56,12 @@ public:
     // Plays a sound to loop infinitely, and returns it's channel. (0 on error)
     static unsigned int sound_loop(const std::string& name, const int& loops = -1);
     // Stops a channel
-    inline static void sound_stop(const unsigned int& channel) { Mix_HaltChannel(channel); }
+    inline static void sound_stop(const unsigned int& channel) { if (channel != 0) { Mix_HaltChannel(channel); } }
     // Checks if the given channel is playing
-    inline static bool sound_is_playing(const unsigned int& channel) { return Mix_Playing(channel) > 0; }
+    inline static bool sound_is_playing(const unsigned int& channel) { return channel != 0 && Mix_Playing(channel) > 0; }
 
     // Starts or changes the background music playing
-    inline static void music_play(const std::string& name);
+    static void music_play(const std::string& name);
     // Stops the music 
     inline static void music_stop() { Mix_HaltMusic(); }
     // Checks if there is music playing
@@ -64,10 +69,10 @@ public:
     // Gives the name of the music that is playing (may be wrong if no music is playing)
     inline static std::string music_playing() { return _current_music->_name; }
 
-    // Plays the voice that corresponds to the dialog and message given 
-    static void voice_play(const std::string& dialog, const unsigned int& message);
+    // Plays the voice that corresponds to the dialog and message given. Returns true if there is a voice for this dialog
+    static bool voice_play(const std::string& dialog, const unsigned int& message);
     // Stops the voice
-    static void voice_stop() { Mix_HaltChannel(0); }
+    inline static void voice_stop() { Mix_HaltChannel(0); }
     // Checks if there is a voice currently playing
     inline static bool voice_is_playing() { return Mix_Playing(0) == 1; }
 

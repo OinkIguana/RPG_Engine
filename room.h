@@ -43,3 +43,5 @@ private:
     static Room* _current_room;
     static Room* _previous_room;
 };
+
+#include "all_actors.h"

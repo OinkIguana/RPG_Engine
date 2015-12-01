@@ -3,7 +3,7 @@
 #include "actor.h"
 
 /*
-#Actor: Wall wall 100
+#Actor: Wall wall 150
 */
 class Wall : public Actor {
 public:

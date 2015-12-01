@@ -18,7 +18,6 @@ Room::~Room() {
 }
 
 void Room::go_to() {
-    RPG::skip_step();
     if (_current_room != nullptr) {
         _current_room->end();
         _previous_room = _current_room;

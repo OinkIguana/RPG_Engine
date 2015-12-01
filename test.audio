@@ -1,0 +1,5 @@
+s dialog_letter "beep.wav"
+s dialog_message "clink.wav"
+s dialog_end "boop.wav"
+m music "music.wav"
+v CatGreeting 0 "voice.wav"

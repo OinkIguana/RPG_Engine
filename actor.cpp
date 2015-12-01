@@ -1,6 +1,7 @@
 #include "actor.h"
 
 std::map<unsigned int, Actor*> Actor::all_actors;
+std::stack<Actor*> Actor::to_destroy;
 unsigned int Actor::c_id = 0;
 
 Actor::Actor() : _id(c_id++) {
@@ -16,6 +17,15 @@ void Actor::clear(const bool & persistent) {
         }
     }
     delete[] a;
+}
+
+bool Actor::do_destroy() {
+    if (to_destroy.size() == 0) { return false; }
+    while (to_destroy.size() > 0) {
+        delete to_destroy.top();
+        to_destroy.pop();
+    }
+    return true;
 }
 
 Actor::~Actor() { all_actors.erase(_id); }

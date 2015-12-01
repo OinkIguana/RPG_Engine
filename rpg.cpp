@@ -10,7 +10,6 @@ RPG::Keystate* RPG::_mouse = nullptr;
 Point RPG::_mouse_pos = Point(0, 0);
 const Uint8* RPG::_sdl_keys = nullptr;
 int RPG::_num_keys = 0;
-bool RPG::_skip_step = false;
 
 void RPG::init() {
     _game_window = SDL_CreateWindow("Untitled RPG", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
@@ -91,6 +90,10 @@ void RPG::draw() {
         bgs[i]->draw(); 
     }
     delete[] bgs;
+    if (Actor::do_destroy()) {
+        delete[] _actors.list;
+        _actors.list = Actor::all<Actor>(&_actors.length);
+    }
     _each_actor([](Actor* act) { act->draw(); });
 
     // Dialog on top always
