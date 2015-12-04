@@ -4,7 +4,7 @@ class RM_demo_inside : public Room {
     friend class Room;
 private:
     RM_demo_inside() : Room("demo_inside", 1024, 1024) {}
-    virtual void tiles() {
+    virtual void tiles() override {
         Background* bg[4];
         Tile * tiles_0[177] = {
             new Tile(Image::get("house"),
@@ -664,7 +664,7 @@ private:
             delete tiles_99[i];
         }
     }
-    virtual void actors() {
+    virtual void actors() override {
         Actor::create<Door>("demo_outside")->pos({608, 496});
         Actor::create<HelloCat>()->pos({256, 256});
         Actor::create<ByeCat>()->pos({640, 320});

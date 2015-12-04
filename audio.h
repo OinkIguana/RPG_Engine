@@ -15,7 +15,7 @@ class Sound {
     friend class Audio;
 private:
     Sound(const std::string& name, const std::string& path);
-    ~Sound() { Mix_FreeChunk(_sound); }
+    inline ~Sound() { Mix_FreeChunk(_sound); }
 
     const std::string _name;
     Mix_Chunk* _sound;
@@ -26,7 +26,7 @@ class Music {
     friend class Audio;
 private:
     Music(const std::string& name, const std::string& path);
-    ~Music() { Mix_FreeMusic(_music); }
+    inline ~Music() { Mix_FreeMusic(_music); }
 
     const std::string _name;
     Mix_Music* _music;
@@ -37,7 +37,7 @@ class Voice {
     friend class Audio;
 private:
     Voice(const std::string& dialog, const unsigned int& message, const std::string& path);
-    ~Voice() { Mix_FreeChunk(_sound); }
+    inline ~Voice() { Mix_FreeChunk(_sound); }
 
     const std::string _dialog;
     const unsigned int _message;

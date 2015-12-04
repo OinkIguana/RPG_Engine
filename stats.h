@@ -12,7 +12,7 @@ public:
         Gets the pointer to the Stat with the given name. If the Stat has not yet been used, it sets the description
     */
     static Stat* get(std::string, std::string = "");
-    ~Stat() { all_stats.erase(_name); }
+    inline ~Stat() { all_stats.erase(_name); }
 
     // Inserts the given amount into the stat description, and produces the string of Name: Description
     std::string to_string(const int amount) const;

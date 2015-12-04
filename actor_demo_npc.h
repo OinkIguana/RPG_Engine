@@ -9,13 +9,13 @@
 #Actor: HelloCat walk_cat 50
 #Actor: ByeCat walk_cat 50
 */
-class NPC : public Wall {
+class NPC : public Solid {
 public:
-    NPC() : Wall() {
+    NPC() : Solid() {
         _sprite = Sprite::get("walk_cat");
         frame(5);
     }
-    virtual void draw() { Actor::draw(); }
+    virtual void draw() override { Actor::draw(); }
     inline Dialog* dialog() const { return _dialog; }
 protected:
     Dialog* _dialog;

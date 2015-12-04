@@ -17,13 +17,6 @@ void Player::key_down(const SDL_Scancode& key) {
                 Dialog::set(npcs[0]->dialog());
             }
             delete[] npcs;
-        } else {
-            Dialog::next();
-            if (Dialog::visible()) {
-                Audio::sound_play("dialog_message");
-            } else {
-                Audio::sound_play("dialog_end");
-            }
         }
     }
 }
@@ -31,12 +24,12 @@ void Player::key_down(const SDL_Scancode& key) {
 void Player::step() {
     if (!Dialog::visible()) {
         Point d = Point(RPG::key(SDL_SCANCODE_RIGHT) - RPG::key(SDL_SCANCODE_LEFT), RPG::key(SDL_SCANCODE_DOWN) - RPG::key(SDL_SCANCODE_UP)) * 4;
-        if (collides<Wall>(pos() + d)) {
+        if (collides<Solid>(pos() + d)) {
             // Find which way has the issue
-            if (collides<Wall>(pos() + Point(d.x, 0))) { d.x = 0; }
-            if (collides<Wall>(pos() + Point(0, d.y))) { d.y = 0; }
+            if (collides<Solid>(pos() + Point(d.x, 0))) { d.x = 0; }
+            if (collides<Solid>(pos() + Point(0, d.y))) { d.y = 0; }
             // If going directly at a corner, just pick one
-            if (collides<Wall>(pos() + d)) { d.x = 0; }
+            if (collides<Solid>(pos() + d)) { d.x = 0; }
         }
         move(d);
         if (d != Point(0, 0)) {

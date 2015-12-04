@@ -10,8 +10,8 @@
 class Player : public Actor {
 public:
     Player();
-    virtual void key_down(const SDL_Scancode&);
-    virtual void step();
+    virtual void key_down(const SDL_Scancode&) override;
+    virtual void step() override;
 
     inline static Inventory& inventory() { return _inventory; }
 private:

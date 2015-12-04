@@ -1,4 +1,5 @@
 #include "dialog.h"
+#include "rpg.h"
 
 Message operator""_speaker(const char* speaker, size_t) {
     return Message(speaker);
@@ -14,7 +15,6 @@ Message Message::operator+(const Message& o) const {
 
 std::function<void(Message*, const Point&)> Message::draw_fn = [] (Message* msg, const Point& pos) {
     msg->speaker().draw(pos - Point(0, msg->speaker().height()), GUI_LAYER);
-    msg->increment();
     msg->message().draw_upto(msg->current_pos(), pos, GUI_LAYER);
 };
 
@@ -22,10 +22,11 @@ void Message::draw(const Point& pos) {
     draw_fn(this, pos);
 }
 
-void Message::increment(const int& x) { 
+int Message::increment(const int& x) { 
     if (_current_pos != _message.length()) {
         _current_pos = (unsigned int)std::fmin(_current_pos + x, _message.length());
     }
+    return _current_pos;
 }
 
 Dialog* Dialog::_on_display = nullptr;
@@ -91,7 +92,20 @@ void Dialog::next() {
     }
 }
 
-std::function<void(Dialog*)> Dialog::draw_fn = [] (Dialog* dialog) {
+std::function<void(Dialog*)> Dialog::step_fn = [](Dialog* dialog) {
+    if (dialog->current()->increment() > 1) {
+        if (RPG::key_pressed(SDL_SCANCODE_Z)) {
+            Dialog::next();
+            if (dialog->current()->current_pos() == 0) {
+                Audio::sound_play("dialog_message");
+            } else if(!dialog->visible()) {
+                Audio::sound_play("dialog_end");
+            }
+        }
+    }
+};
+
+std::function<void(Dialog*)> Dialog::draw_fn = [](Dialog* dialog) {
     Rect box = Rect(0, WINDOW_HEIGHT - 150, WINDOW_WIDTH, 150);
     draw::set_color(Color(0xEE, 0xEE, 0xEE, 0x33));
     draw::rect(box, GUI_LAYER - 1);
@@ -103,6 +117,12 @@ inline void Dialog::start() {
     _messages[_current_message]->current_pos(0); 
     _on_display = this; 
     voice();
+}
+
+void Dialog::step() {
+    if (_on_display != nullptr) {
+        step_fn(_on_display);
+    }
 }
 
 void Dialog::draw() {

@@ -25,6 +25,9 @@ public:
 
     inline static Room* current_room() { return _current_room; }
     inline static Room* previous_room() { return _previous_room; }
+
+    // Run the current room's step function
+    static void step() { _current_room->on_step(); }
 protected:
     Room(const std::string& name, const int& width, const int& height) : _name(name), _width(width), _height(height){};
     const std::string _name;
@@ -33,8 +36,10 @@ protected:
 
     virtual void tiles() = 0;
     virtual void actors() = 0;
+
     virtual void on_room_start() {};
     virtual void on_room_end() {};
+    virtual void on_step() {};
 private:
     void start();
     void end();

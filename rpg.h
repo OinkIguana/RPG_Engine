@@ -18,11 +18,12 @@
 #include "inventory.h"
 #include "actor.h"
 #include "room.h"
+#include "progress.h"
 
 // The controller of the RPG engine
 class RPG {
 public:
-    enum Keystate { RELEASED, PRESSED };
+    enum Keystate { UNPRESSED, RELEASED, PRESSED, HELD };
     static void init();
     static void exit();
 
@@ -36,7 +37,14 @@ public:
     static void step();
 
     static void draw();
-    inline static Keystate key(const SDL_Scancode& key) { return _keys[key]; }
+
+    inline static Keystate key_state(const SDL_Scancode& key) { return _keys[key]; }
+    inline static bool key(const SDL_Scancode& key) { return _keys[key] > Keystate::RELEASED; }
+    inline static bool key_pressed(const SDL_Scancode& key) { return _keys[key] == Keystate::PRESSED; }
+    inline static bool key_released(const SDL_Scancode& key) { return _keys[key] == Keystate::RELEASED; }
+
+    // Set the function that is run every step
+    inline static void on_step(std::function<void(void)> fn) { _control_step = fn; }
 private:
     static struct ActorList {
         Actor** list;
@@ -58,4 +66,5 @@ private:
     static Keystate* _mouse;
     static Point _mouse_pos;
     static bool _done;
+    static std::function<void(void)> _control_step;
 };

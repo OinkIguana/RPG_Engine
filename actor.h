@@ -1,7 +1,7 @@
 #pragma once
 
 #include <map>
-#include <stack>
+#include <vector>
 #include "types.h"
 #include "sprite.h"
 #include "config.h"
@@ -37,25 +37,31 @@ public:
     inline static T* create(const std::string& arg) { return new T(arg); }
 
     // Queues the given actor for destruction
-    inline static void destroy(Actor* p) { to_destroy.push(p); }
+    inline static void destroy(Actor* p) { to_destroy.push_back(p); }
     // Destroys all actors in the queue. Returns true if there were objects destroyed
     static bool do_destroy();
 
-    virtual void key_down(const SDL_Scancode& key) {};
-    virtual void key_up(const SDL_Scancode& key) {};
-    virtual void mouse_down(const Uint8& button) {};
-    virtual void mouse_up(const Uint8& button) {};
-    virtual void mouse_wheel(const Point& dist) {};
+    // Input events
+    virtual void key_down(const SDL_Scancode& key) {}
+    virtual void key_up(const SDL_Scancode& key) {}
+    virtual void mouse_down(const Uint8& button) {}
+    virtual void mouse_up(const Uint8& button) {}
+    virtual void mouse_wheel(const Point& dist) {}
 
     // NOT IMPLEMENTED
-    virtual void controller_down(const SDL_JoystickID& id, const Uint8& button) {};
+    virtual void controller_down(const SDL_JoystickID& id, const Uint8& button) {}
     // NOT IMPLEMENTED
-    virtual void controller_up(const SDL_JoystickID& id, const Uint8& button) {};
+    virtual void controller_up(const SDL_JoystickID& id, const Uint8& button) {}
 
     // Run once per frame
-    virtual void step() {};
+    virtual void step() {}
     // Run once per frame, after the screen has been cleared
     virtual void draw();
+
+    // Run once at the beginning of the room
+    virtual void room_start() {}
+    // Run once at the end of the room
+    virtual void room_end() {}
 
     // Get the current frame of the Sprite this Actor is on
     inline unsigned int frame() const { return _frame; }
@@ -72,7 +78,9 @@ public:
     inline Point move(const Point& d) { return _pos += d; }
 
     // Get the bounding box
-    inline Rect bbox() const { return (Rect)_pos << (_sprite != nullptr ? _sprite->frame(_frame) : Rect::no_box); }
+    inline Rect bbox() const { return _bbox == Rect::no_box ? (_sprite != nullptr ? _sprite->frame(_frame) >> _pos : Rect::no_box) : _bbox >> (_pos + _bbox); }
+    // Set the bounding box (override sprite)
+    inline Rect bbox(const Rect& b) { return _bbox = b; }
 
     // Get the current drawing depth of the Actor
     inline int depth() const { return _depth; }
@@ -84,6 +92,8 @@ public:
 
     // Get the id of the Actor
     inline unsigned int id() const { return _id; }
+
+    operator bool() { return this != nullptr; }
 protected:
     ~Actor();
     Sprite* _sprite = nullptr;
@@ -99,10 +109,10 @@ protected:
     inline Actor* collides(Actor** o, const unsigned int& n, const Point& p) const { for (unsigned int i = 0; i < n; i++) { if (collides(o[i], p)) return o[i]; } return nullptr; }
     // Determines if the current Actor collides with any of a type
     template<typename T>
-    inline T* collides() const;
+    T* collides() const;
     // Determines if the current Actor would collide with any of a type at a given position
     template<typename T>
-    inline T* collides(const Point& p) const;
+    T* collides(const Point& p) const;
 
     // Determines which others the current Actor collides with of a type
     // Calls new[], so delete[] when finished
@@ -114,39 +124,41 @@ protected:
     inline T ** collides(const Point& p, unsigned int* count) const;
 
     // Determines if the current Actor lies against another
-    inline bool against(Actor* o) const { return    (((bbox().rs() == o->bbox().x) || (bbox().x == o->bbox().rs())) && (bbox().bot() > o->bbox().y && bbox().y < o->bbox().bot())) ||
-                                                    (((bbox().bot() == o->bbox().y) || (bbox().y == o->bbox().bot())) && (bbox().rs() > o->bbox().x && bbox().x < o->bbox().rs())); }
+    inline bool against(Actor* o) const { return bbox().against(o->bbox()); }
     // Determines if the current Actor would lie against another at a given position
-    inline bool against(Actor* o, const Point& p) const { return ((bbox() >> p).rs() == o->bbox().x) || ((bbox() >> p).bot() == o->bbox().y) || ((bbox() >> p).x == o->bbox().rs()) || ((bbox() >> p).y == o->bbox().bot()); }
+    bool against(Actor* o, const Point& p) const { return ((bbox() >> p).rs() == o->bbox().x) || ((bbox() >> p).bot() == o->bbox().y) || ((bbox() >> p).x == o->bbox().rs()) || ((bbox() >> p).y == o->bbox().bot()); }
     // Determines if the current Actor lies against any of the others
     inline Actor* against(Actor** o, const unsigned int& n) const { for (unsigned int i = 0; i < n; i++) { if (against(o[i])) return o[i]; } return nullptr; }
     // Determines if the current Actor would lie against any of the others at a given position
     inline Actor* against(Actor** o, const unsigned int& n, const Point& p) const { for (unsigned int i = 0; i < n; i++) { if (against(o[i], p)) return o[i]; } return nullptr; }
     // Determines if the current Actor lies against any of a type
     template<typename T>
-    inline T* against() const;
+    T* against() const;
     // Determines if the current Actor lies against any of a type at a given position
     template<typename T>
-    inline T* against(const Point& p) const;
+    T* against(const Point& p) const;
 
     // Determines which Actors the current Actor lies against of a type
     // Calls new[], so delete[] when finished
     template<typename T>
-    inline T ** against(unsigned int* count = nullptr) const;
+    T ** against(unsigned int* count = nullptr) const;
     // Determines which Actors the current Actor lies against of a type at a given position
     // Calls new[], so delete[] when finished
     template<typename T>
-    inline T ** against(const Point& p, unsigned int* count = nullptr) const;
+    T ** against(const Point& p, unsigned int* count = nullptr) const;
 
-    operator bool() { return this != nullptr; }
+    // Merges adjacent objects (by bbox) into one larger one (speeds up collision)
+    template<typename T>
+    static void merge();
 private:
     const unsigned int _id;
     unsigned int _frame = 0;
     Point _pos;
+    Rect _bbox = Rect::no_box;
     int _depth = DEFAULT_ACTOR_LAYER;
 
     static std::map<unsigned int, Actor*> all_actors;
-    static std::stack<Actor*> to_destroy;
+    static std::vector<Actor*> to_destroy;
     static unsigned int c_id;
 };
 
@@ -177,7 +189,14 @@ T** Actor::all(unsigned int* count) {
         }
         T* is = nullptr;
         if ((is = dynamic_cast<T*>(i->second)) != nullptr) {
-            n++;
+            for (unsigned int j = 0; j < to_destroy.size(); j++) {
+                if (to_destroy[j] == is) {
+                    is = nullptr;
+                }
+            }
+            if (is != nullptr) {
+                n++;
+            }
         }
         ++i;
         next();
@@ -189,7 +208,7 @@ T** Actor::all(unsigned int* count) {
 }
 
 template<typename T>
-inline T* Actor::collides() const {
+T* Actor::collides() const {
     unsigned int n;
     T ** a = all<T>(&n);
     T* does = dynamic_cast<T*>(collides((Actor**)a, n));
@@ -198,7 +217,7 @@ inline T* Actor::collides() const {
 }
 
 template<typename T>
-inline T* Actor::collides(const Point& p) const {
+T* Actor::collides(const Point& p) const {
     unsigned int n;
     T ** a = all<T>(&n);
     T* does = dynamic_cast<T*>(collides((Actor**)a, n, p));
@@ -207,7 +226,7 @@ inline T* Actor::collides(const Point& p) const {
 }
 
 template<typename T>
-inline T*  Actor::against() const {
+T*  Actor::against() const {
     unsigned int n;
     T ** a = all<T>(&n);
     T* does = dynamic_cast<T*>(against((Actor**)a, n));
@@ -225,7 +244,7 @@ inline T* Actor::against(const Point& p) const {
 }
 
 template<typename T>
-inline T ** Actor::against(unsigned int* count) const {
+T ** Actor::against(unsigned int* count) const {
     auto i = all_actors.begin();
     T** list;
     unsigned int n = 0;
@@ -256,7 +275,7 @@ inline T ** Actor::against(unsigned int* count) const {
 }
 
 template<typename T>
-inline T ** Actor::against(const Point & p, unsigned int* count) const {
+T ** Actor::against(const Point & p, unsigned int* count) const {
     auto i = all_actors.begin();
     T** list;
     unsigned int n = 0;
@@ -287,7 +306,7 @@ inline T ** Actor::against(const Point & p, unsigned int* count) const {
 }
 
 template<typename T>
-inline T ** Actor::collides(unsigned int* count) const {
+T ** Actor::collides(unsigned int* count) const {
     auto i = all_actors.begin();
     T** list;
     unsigned int n = 0;
@@ -318,7 +337,7 @@ inline T ** Actor::collides(unsigned int* count) const {
 }
 
 template<typename T>
-inline T ** Actor::collides(const Point & p, unsigned int* count) const {
+T ** Actor::collides(const Point & p, unsigned int* count) const {
     auto i = all_actors.begin();
     T** list;
     unsigned int n = 0;
@@ -346,4 +365,49 @@ inline T ** Actor::collides(const Point & p, unsigned int* count) const {
         }
     })();
     return list;
+}
+
+template<typename T>
+void Actor::merge() {
+    unsigned int n = 1;
+    T ** act = all<T>(&n);
+    {   // Horizontal
+        unsigned int i = 0;
+        while (i < n) {
+            Rect total = act[i]->bbox();
+            for (unsigned int j = i + 1; j < n; j++) {
+                Rect comb = total | act[j]->bbox();
+                if (comb.w - total.w <= act[j]->bbox().w && total.h == act[j]->bbox().h && total.h == comb.h) {
+                    total = comb;
+                    destroy(act[j]);
+                }
+            }
+            act[i]->pos(total);
+            act[i]->bbox(total >> Point(0, 0));
+            unsigned int x = n;
+            delete[] act;
+            act = all<T>(&n);
+            if (n == x) { i++; }
+        }
+    }
+    {   // Vertical
+        unsigned int i = 0;
+        while (i < n) {
+            Rect total = act[i]->bbox();
+            for (unsigned int j = i + 1; j < n; j++) {
+                Rect comb = total | act[j]->bbox();
+                if (comb.h - total.h <= act[j]->bbox().h && total.w == act[j]->bbox().w && total.w == comb.w) {
+                    total = comb;
+                    destroy(act[j]);
+                }
+            }
+            act[i]->pos(total);
+            act[i]->bbox(total >> Point(0, 0));
+            unsigned int x = n;
+            delete[] act;
+            act = all<T>(&n);
+            if (n == x) { i++; }
+        }
+    }
+    delete[] act;
 }

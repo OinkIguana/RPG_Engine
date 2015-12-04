@@ -91,7 +91,7 @@ class Item {
 public:
     // Create a new Item
     Item(ItemType* type = nullptr, int level = 1, StatList stats = StatList()) : _type(type), _level(level), _stats(stats) {}
-    ~Item() {}
+    inline ~Item() {}
 
     // Get this item's level
     inline unsigned int level()                     { return _level; }
@@ -186,7 +186,7 @@ class Inventory {
 public:
     // Create a new Inventory with the given number of slots
     Inventory(int slot_count) : _length(slot_count), _slots(new ItemStack[slot_count]) { sort.inv = this; }
-    ~Inventory() { delete[] _slots; }
+    inline ~Inventory() { delete[] _slots; }
 
     // Get the total number of stacks with the given type in the inventory
     int count(ItemType* type) const;

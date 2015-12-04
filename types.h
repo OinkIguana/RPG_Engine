@@ -121,6 +121,15 @@ struct Rect {
     // Returns an equivalent rectangle with all values positive
     inline Rect abs() const { return Rect((int) std::fmin(x + w, x), (int) std::fmin(y + h, y), (int) std::abs(w), (int) std::abs(h)); }
 
+    // Determines if two rectangles lie against each other
+    inline bool against(const Rect& o) const {
+        return (((rs() == o.x) || (x == o.rs())) && (bot() > o.y && y < o.bot())) ||
+               (((bot() == o.y) || (y == o.bot())) && (rs() > o.x && x < o.rs()));   
+    }
+
+    // Determines if this rectangle contains another
+    inline bool contains(const Rect& o) const { return ((*this) | o) == (*this); }
+
     // Calculates a rectangle representing the intersection of two rectangles
     Rect operator&(const Rect) const;
 
@@ -171,6 +180,15 @@ struct Rectf {
 
     // Returns an equivalent rectangle with all values positive
     inline Rectf abs() const { return Rectf(std::fmin(x + w, x), std::fmin(y + h, y), std::abs(w), std::abs(h)); }
+
+    // Determines if two rectangles lie against each other
+    inline bool against(const Rectf& o) const {
+        return (((rs() == o.x) || (x == o.rs())) && (bot() > o.y && y < o.bot())) ||
+                (((bot() == o.y) || (y == o.bot())) && (rs() > o.x && x < o.rs()));
+    }
+
+    // Determines if this rectangle contains another
+    inline bool contains(const Rectf& o) const { return ((*this) | o) == (*this); }
 
     // Calculates a rectangle representing the intersection of two rectangles
     Rectf operator&(const Rectf) const;

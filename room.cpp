@@ -30,10 +30,25 @@ void Room::start() {
     tiles();
     actors();
     on_room_start();
+
+    unsigned int n;
+    Actor** act = Actor::all<Actor>(&n);
+    for (unsigned int i = 0; i < n; i++) {
+        act[i]->room_start();
+    }
+    delete[] act;
 }
 
 void Room::end() {
     on_room_end();
+
+    unsigned int n;
+    Actor** act = Actor::all<Actor>(&n);
+    for (unsigned int i = 0; i < n; i++) {
+        act[i]->room_end();
+    }
+    delete[] act;
+
     Actor::clear();
     Background::remove_room_bgs();
 }

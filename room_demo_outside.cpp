@@ -4,8 +4,8 @@ class RM_demo_outside : public Room {
     friend class Room;
 private:
     RM_demo_outside() : Room("demo_outside", 1024, 768) {}
-    virtual void tiles() {
-        Background* bg[4];
+    virtual void tiles() override {
+        Background* bg[8];
         Tile * tiles_0[768] = {
             new Tile(Image::get("grass"),
                     Point(0, 0),
@@ -2493,8 +2493,374 @@ private:
         for(unsigned int i = 0; i < 12; i++) {
             delete tiles_100[i];
         }
+        Tile * tiles_10[29] = {
+            new Tile(Image::get("water"),
+                    Point(832, 0),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 0),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 32),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 64),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 96),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 96),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 128),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 160),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 160),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 192),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 224),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(992, 224),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(992, 192),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 64),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 32),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 64),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 128),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 160),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 192),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 224),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 32),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(768, 0),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(768, 32),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 64),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 96),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 128),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 160),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 192),
+                    Rect(0, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 128),
+                    Rect(0, 0, 32, 32)),
+        };
+        bg[4] = new Background(29, tiles_10, 10);
+        for(unsigned int i = 0; i < 29; i++) {
+            delete tiles_10[i];
+        }
+        Tile * tiles_15[27] = {
+            new Tile(Image::get("grass"),
+                    Point(768, 0),
+                    Rect(64, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(832, 96),
+                    Rect(64, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(896, 96),
+                    Rect(0, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(832, 0),
+                    Rect(0, 96, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(928, 128),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(960, 160),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(864, 32),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(800, 64),
+                    Rect(32, 32, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(864, 160),
+                    Rect(32, 32, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(896, 192),
+                    Rect(32, 32, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(928, 224),
+                    Rect(32, 32, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(960, 224),
+                    Rect(32, 64, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(992, 224),
+                    Rect(32, 64, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(992, 192),
+                    Rect(32, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(960, 192),
+                    Rect(0, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(928, 160),
+                    Rect(0, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(896, 128),
+                    Rect(0, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(864, 64),
+                    Rect(0, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(896, 64),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(832, 32),
+                    Rect(0, 128, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(832, 64),
+                    Rect(64, 64, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(864, 128),
+                    Rect(64, 64, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(896, 160),
+                    Rect(64, 64, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(928, 192),
+                    Rect(64, 64, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(832, 128),
+                    Rect(32, 32, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(768, 32),
+                    Rect(32, 32, 32, 32)),
+            new Tile(Image::get("grass"),
+                    Point(800, 32),
+                    Rect(64, 64, 32, 32)),
+        };
+        bg[5] = new Background(27, tiles_15, 15);
+        for(unsigned int i = 0; i < 27; i++) {
+            delete tiles_15[i];
+        }
+        Tile * tiles_11[29] = {
+            new Tile(Image::get("water"),
+                    Point(768, 0),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(768, 32),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 32),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 0),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 0),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 32),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 64),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 64),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 64),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 32),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 96),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 96),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 128),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 128),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 128),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 96),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 64),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 160),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 160),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 160),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 128),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 160),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 192),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 192),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 192),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(992, 192),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(992, 224),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 224),
+                    Rect(32, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 224),
+                    Rect(32, 0, 32, 32)),
+        };
+        bg[6] = new Background(29, tiles_11, 11);
+        for(unsigned int i = 0; i < 29; i++) {
+            delete tiles_11[i];
+        }
+        Tile * tiles_12[29] = {
+            new Tile(Image::get("water"),
+                    Point(768, 0),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(768, 32),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 32),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 0),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 0),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 32),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 32),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 64),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(800, 64),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 64),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 64),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 96),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 96),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 96),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(832, 128),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 128),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 160),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 128),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 128),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 160),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(864, 160),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 160),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 192),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(896, 192),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 192),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(960, 224),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(928, 224),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(992, 192),
+                    Rect(64, 0, 32, 32)),
+            new Tile(Image::get("water"),
+                    Point(992, 224),
+                    Rect(64, 0, 32, 32)),
+        };
+        bg[7] = new Background(29, tiles_12, 12);
+        for(unsigned int i = 0; i < 29; i++) {
+            delete tiles_12[i];
+        }
     }
-    virtual void actors() {
+    virtual void actors() override {
         Actor::create<Door>("demo_inside")->pos({352, 304});
         Actor::create<Apple>()->pos({672, 480});
         Actor::create<Apple>()->pos({768, 384});
@@ -2586,22 +2952,6 @@ private:
         Actor::create<Wall>()->pos({1024, 320});
         Actor::create<Wall>()->pos({1024, 288});
         Actor::create<Wall>()->pos({1024, 256});
-        Actor::create<Wall>()->pos({1024, 224});
-        Actor::create<Wall>()->pos({1024, 192});
-        Actor::create<Wall>()->pos({1024, 160});
-        Actor::create<Wall>()->pos({1024, 128});
-        Actor::create<Wall>()->pos({1024, 96});
-        Actor::create<Wall>()->pos({1024, 64});
-        Actor::create<Wall>()->pos({1024, 32});
-        Actor::create<Wall>()->pos({1024, 0});
-        Actor::create<Wall>()->pos({992, -32});
-        Actor::create<Wall>()->pos({960, -32});
-        Actor::create<Wall>()->pos({928, -32});
-        Actor::create<Wall>()->pos({896, -32});
-        Actor::create<Wall>()->pos({864, -32});
-        Actor::create<Wall>()->pos({832, -32});
-        Actor::create<Wall>()->pos({800, -32});
-        Actor::create<Wall>()->pos({768, -32});
         Actor::create<Wall>()->pos({736, -32});
         Actor::create<Wall>()->pos({704, -32});
         Actor::create<Wall>()->pos({672, -32});
@@ -2626,5 +2976,25 @@ private:
         Actor::create<Wall>()->pos({0, -32});
         Actor::create<Wall>()->pos({32, -32});
         Actor::create<Wall>()->pos({64, -32});
+        Actor::create<Wall>()->pos({800, 0});
+        Actor::create<Wall>()->pos({832, 32});
+        Actor::create<Wall>()->pos({864, 32});
+        Actor::create<Wall>()->pos({864, 64});
+        Actor::create<Wall>()->pos({864, 96});
+        Actor::create<Wall>()->pos({896, 96});
+        Actor::create<Wall>()->pos({896, 128});
+        Actor::create<Wall>()->pos({928, 160});
+        Actor::create<Wall>()->pos({928, 128});
+        Actor::create<Wall>()->pos({960, 192});
+        Actor::create<Wall>()->pos({992, 192});
+        Actor::create<Wall>()->pos({1024, 224});
+        Actor::create<Wall>()->pos({768, -32});
     }
+    virtual void on_room_start() override {
+        Background::get("room_12")->hide(); Background::get("room_11")->hide();
+    }
+    virtual void on_step() override {
+        Background::get("room_" + std::to_string(10 + (int)std::floor(_water_layer / 20)))->hide(); _water_layer = (_water_layer + 1) % 60;Background::get("room_" + std::to_string(10 + (int)std::floor(_water_layer / 20)))->show();
+    }
+    unsigned int _water_layer = 0;
 };

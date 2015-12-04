@@ -1,14 +1,24 @@
 #pragma once
 
 #include "actor.h"
+#include "actor_demo_solid.h"
 
 /*
 #Actor: Wall wall 150
 */
-class Wall : public Actor {
+class Wall : public Solid {
 public:
-    Wall() : Actor() {
-        _sprite = Sprite::get("wall");
+    Wall() : Solid() {
+        bbox(Rect(0, 0, 32, 32));
     }
-    virtual void draw() {}
+    virtual void room_start() override {
+        if (!_merged) {
+            merge<Wall>();
+            _merged = true;
+        }
+    }
+    virtual void room_end() override { _merged = false; }
+private:
+    static bool _merged;
 };
+
