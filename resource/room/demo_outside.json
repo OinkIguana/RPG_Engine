@@ -12,6 +12,15 @@
         ]
       }
     ],
+    "QuestCat": [
+      {
+        "x": 192,
+        "y": 320,
+        "args": [
+
+        ]
+      }
+    ],
     "Apple": [
       {
         "x": 672,
@@ -13083,6 +13092,6 @@
   "on_step": "Background::get(\"room_\" + std::to_string(10 + (int)std::floor(_water_layer / 20)))->hide(); _water_layer = (_water_layer + 1) % 60;Background::get(\"room_\" + std::to_string(10 + (int)std::floor(_water_layer / 20)))->show();",
   "on_end": null,
   "properties": [
-      "unsigned int _water_layer = 0;"
+    "unsigned int _water_layer = 0;"
   ]
 }

@@ -275,7 +275,7 @@ int Inventory::count_individual(ItemType* t) const {
     return c;
 }
 
-int Inventory::find(ItemType* t, const int start) const {
+int Inventory::find(ItemType* t, const unsigned int& start) const {
     for (unsigned int i = start; i < _length; i++) {
         if (_slots[i].type() == t) {
             return i;
@@ -284,7 +284,7 @@ int Inventory::find(ItemType* t, const int start) const {
     return _length;
 }
 
-int Inventory::r_find(ItemType * t, const int start) const {
+int Inventory::r_find(ItemType * t, const unsigned int& start) const {
     for (int i = _length - start - 1; i >= 0; i--) {
         if (_slots[i].type() == t) {
             return i;
@@ -304,10 +304,27 @@ void Inventory::merge() {
     }
 }
 
-int Inventory::add(ItemType* t, const unsigned int amount, const unsigned int level, const StatList stats) {
+int Inventory::add(ItemType* t, const unsigned int& amount, const unsigned int& level, const StatList& stats) {
     unsigned int a = amount, i = 0;
     while ((a = _slots[i++].add(t, a, level, stats)) && i < _length);
     return a;
+}
+
+ItemStack* Inventory::remove(ItemType* type, const unsigned int& amt, const unsigned int& level) {
+    ItemStack* stack = new ItemStack(type);
+    unsigned int i = 0;
+    int ind = -1;
+    while (i < amt && (ind = find(type, ind + 1)) != _length && !stack->full()) {
+        while (i < amt && !_slots[ind].empty()) {
+            if (_slots[ind][0]->level() >= level) {
+                (*stack) << _slots[ind].remove(0u);
+                i++;
+            } else {
+                break;
+            }
+        }
+    }
+    return stack;
 }
 
 Inventory &Inventory::operator<<(Item * o) {

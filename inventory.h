@@ -126,7 +126,9 @@ public:
     inline unsigned int length() const  { return _length; }
     inline Item* first() const          { return _items[0]; }
     inline Item* last()  const          { return _items[_length - 1]; }
+
     inline bool full() const            { return _type != nullptr && _length == _type->max_stack(); }
+    inline bool empty() const           { return _type == nullptr || _length == 0; }
 
     /* Returns the level of the lowest levelled Item in the stack */
     unsigned int min_level() const;
@@ -194,9 +196,9 @@ public:
     int count_individual(ItemType* type) const;
 
     // Find the first stack of the given type (going forward from start)
-    int find(ItemType* type, const int start = 0) const;
+    int find(ItemType* type, const unsigned int& start = 0) const;
     // Find the first stack of the given type (going back from start)
-    int r_find(ItemType* type, const int start = 0) const;
+    int r_find(ItemType* type, const unsigned int& start = 0) const;
 
     inline unsigned int length() const { return _length; }
 
@@ -240,10 +242,12 @@ public:
     // Pointer to the last stack
     inline ItemStack* end() const { return _slots + _length; }
 
-    inline ItemStack& operator[](const unsigned int i) const { return _slots[i]; }
+    inline ItemStack& operator[](const unsigned int& i) const { return _slots[i]; }
 
-    int add(ItemType*, const unsigned int = 1, const unsigned int = 1, const StatList = StatList());
-
+    int add(ItemType* type, const unsigned int& amt = 1, const unsigned int& level = 1, const StatList& stats = StatList());
+    // Removes amt items of type at least the given level from the inventory.
+    // Stops if there are none left, or if the amount removed exceeds the item's max stack
+    ItemStack* remove(ItemType* type, const unsigned int& amt = 1, const unsigned int& level = 1);
     // Add an item to the inventory
     Inventory& operator<<(Item* item);
     // Add a stack of items to the inventory

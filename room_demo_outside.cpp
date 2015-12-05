@@ -2862,6 +2862,7 @@ private:
     }
     virtual void actors() override {
         Actor::create<Door>("demo_inside")->pos({352, 304});
+        Actor::create<QuestCat>()->pos({192, 320});
         Actor::create<Apple>()->pos({672, 480});
         Actor::create<Apple>()->pos({768, 384});
         Actor::create<Apple>()->pos({704, 320});

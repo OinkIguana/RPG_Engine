@@ -1,6 +1,6 @@
 #include "progress.h"
 
-Quest Quest::nullquest = Quest([] (Quest*) { return false; }, [] (Quest*) {}, "[null quest]");
+Quest Quest::nullquest = Quest("[null quest]");
 std::map<std::string, Storyline*> Progress::all_storylines;
 
 Storyline::Storyline(const std::string& name, const unsigned int length, ...) : _name(name), _length(length) {
@@ -21,4 +21,12 @@ void Progress::check() {
             i->second->make_progress();
         }
     }
+}
+
+Storyline* Progress::get(const std::string& name) {
+    auto found = all_storylines.find(name);
+    if (found != all_storylines.end()) {
+        return found->second;
+    }
+    return nullptr;
 }

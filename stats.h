@@ -41,7 +41,7 @@ class StatList {
 public:
     StatList() {}
     StatList(std::string);
-    ~StatList() {}
+    inline ~StatList() {}
 
     // Add two stat lists
     StatList operator+(const StatList) const;

@@ -55,6 +55,7 @@ void game() {
     ItemType::import("test.items");
     Dialog::import("test.dialog");
     Stat::import("test.stats");
+    Progress::import();
     Room::import();
 
     Room::get("demo_inside")->go_to();

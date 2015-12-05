@@ -39,7 +39,7 @@ Background::~Background() {
 void Background::remove_room_bgs() {
     for (auto i = all_backgrounds.begin(); i != all_backgrounds.end();) {
         if (i->first.substr(0, 4) == "room") {
-            all_backgrounds.erase(i++);
+            delete (i++)->second;
         } else {
             ++i;
         }

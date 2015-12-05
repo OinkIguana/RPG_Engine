@@ -5,3 +5,15 @@ Cat 1:I am good ~
 [CatGoodbye]
 Cat 1:I am leaving now #rCat#k.
 Cat 2:Oh ok, Bye #bCat#k.
+[CatQuest.before]
+Cat 3:I have a #gquest#k for you.```.```.``` Bring me 3 #rapples#k!
+Cat 2:Ok, I will do that.
+[CatQuest.during]
+Cat 3:Do you have my 3 #rapples#k?
+Cat 2:Not yet.
+[CatQuest.end]
+Cat 2:Here are your #rapples#k.
+Cat 3:Thank you. I have no reward.
+Cat 2:That is ok. See you later.
+[CatQuest.after]
+Cat 3:Thanks for the #rapples#k.

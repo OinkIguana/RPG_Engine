@@ -141,7 +141,7 @@ protected:
     // Determines which Actors the current Actor lies against of a type
     // Calls new[], so delete[] when finished
     template<typename T>
-    T ** against(unsigned int* count = nullptr) const;
+    T ** against(unsigned int* count) const;
     // Determines which Actors the current Actor lies against of a type at a given position
     // Calls new[], so delete[] when finished
     template<typename T>

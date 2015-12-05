@@ -6,6 +6,10 @@ run_cat cat
 f 0 0 32 32
 b 192 0 96 128
 x
+sit_cat cat
+f 0 0 32 32
+b 192 128 96 64
+x
 wall wall
 f 0 0 32 32
 x

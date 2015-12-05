@@ -14,7 +14,7 @@ void Player::key_down(const SDL_Scancode& key) {
             unsigned int n;
             NPC ** npcs = against<NPC>(&n);
             if (n >= 1) {
-                Dialog::set(npcs[0]->dialog());
+                npcs[0]->talk();
             }
             delete[] npcs;
         }
