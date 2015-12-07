@@ -12,22 +12,38 @@ Current Features:
         * With collision detection and animation
     * Audio
         * SFX, Music and Voice acting
+    * Fonts
 * Dialog
     * Changeable colours and fonts
     * Display text letter by letter
     * Sound effects and voice acting
 * Inventory
-    * Sorting
+    * Sorting by various properties
     * Items grouped by type in stacks
+    * Add/remove/count items easily
 * Stat lists
+* Skill trees (untested)
+    * Skill point tracking
+    * Prerequisites
+        * Skills along an edge; or
+        * Total skills behind
+    * Branches and merges
 * Rooms
     * [Room Editor]
-* Keyboard/Mouse controls
+        * Lay out tiles/actors
+        * Save to JSON
+        * ERB template to any format
+* Keyboard/Mouse events
+* Progress tracker
+    * Quests
+* Some utility classes
+    * Point, Rect, Angle, Sequence
 
-There is a very simple demo in place to show one way things can be done
+There is a very simple demo in place to show one way things can be done.
 
 Planned features:
 * Map
-* Skill trees
-* Quests/Progress tracker
+* Viewports
 * Menus
+* Pausing/Disabling of actors
+* Save/Load

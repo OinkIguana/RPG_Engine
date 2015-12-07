@@ -10,7 +10,7 @@ sit_cat cat
 f 0 0 32 32
 b 192 128 96 64
 x
-wall wall
+placeholder placeholder
 f 0 0 32 32
 x
 apple apple

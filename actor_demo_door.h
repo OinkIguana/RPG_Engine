@@ -4,7 +4,7 @@
 class Room;
 
 /*
-#Actor: Door wall 150 1
+#Actor: Door placeholder 150 1
 */
 
 class Door : public Actor {

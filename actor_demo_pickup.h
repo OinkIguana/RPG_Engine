@@ -5,7 +5,7 @@
 #include "inventory.h"
 
 /*
-#Actor: Pickup wall 50 1
+#Actor: Pickup placeholder 50 1
 #Actor: Apple apple
 */
 

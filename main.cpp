@@ -55,6 +55,8 @@ void game() {
     ItemType::import("test.items");
     Dialog::import("test.dialog");
     Stat::import("test.stats");
+    Skill::import("test.skill");
+    SkillTree::import("test.tree");
     Progress::import();
     Room::import();
 

@@ -15,6 +15,7 @@
 #include "audio.h"
 #include "dialog.h"
 #include "stats.h"
+#include "skills.h"
 #include "inventory.h"
 #include "actor.h"
 #include "room.h"

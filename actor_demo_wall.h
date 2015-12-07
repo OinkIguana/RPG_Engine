@@ -4,7 +4,7 @@
 #include "actor_demo_solid.h"
 
 /*
-#Actor: Wall wall 150
+#Actor: Wall placeholder 150
 */
 class Wall : public Solid {
 public:
