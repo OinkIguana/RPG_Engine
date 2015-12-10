@@ -1,4 +1,6 @@
 #pragma once
+
+#include <functional>
 #include <fstream>
 #include <cstdarg>
 #include <string>
@@ -62,9 +64,14 @@ public:
     inline unsigned int level() const { return _level; }
     inline unsigned int prereq_points() const { return _prereq_points; }
 
+    // Level up a node (if possible)
     bool level_up();
-    bool level_down();
+    // Checks if a node can be levelled up
     bool levellable() const;
+    // Level down a node (if possible)
+    bool level_down();
+    // Checks if the node's current level is valid given the current tree
+    bool valid() const;
 
     inline unsigned int branch_count() const { return _branch_count; }
 
@@ -95,11 +102,11 @@ public:
     SkillNode& operator[] (const std::string& i) { return _nodes[i]; }
 
     // Finds all base nodes of the skill tree
-    std::string* bases(unsigned int* count) const;
-    // Finds all nodes above (in no order)
-    std::string* above(const SkillNode*) { return new std::string(); };
+    std::string* bases(unsigned int* count) const { *count = _bases_count; return _bases; }
+    // Finds all nodes above (in no order) a node, including the given node
+    std::string* above(const SkillNode* node, unsigned int* count);
     // Finds all direct parents of the given node
-    std::string* parents(const SkillNode*) { return new std::string(); };
+    std::string* parents(const SkillNode* node, unsigned int* count);
     
     /* Imports a SkillTree from a file of the form:
     =============
@@ -138,7 +145,9 @@ private:
     unsigned int _total_points;
     std::map<std::string, SkillNode> _nodes;
 
+    void _set_bases();
     std::string* _bases;
+    unsigned int _bases_count = 0;
 
     static std::map<std::string, SkillTree*> all_trees;
 };

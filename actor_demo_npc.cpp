@@ -10,7 +10,7 @@ void QuestCat::_on_talk() {
             storyline->quest(0).start();
         } else {
             if (!storyline->done()) {
-                if (player->inventory().count_individual(ItemType::get("Apple")) == 3) {
+                if (player->inventory().count_individual(ItemType::get("Apple")) >= 3) {
                     _dialog = Dialog::get("CatQuest.end");
                     if (!storyline->quest(0).finished()) {
                         storyline->quest(0).finish();
