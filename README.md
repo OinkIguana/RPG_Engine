@@ -1,6 +1,11 @@
 [Room Editor]: http://github.com/OinkIguana/Room_Editor
+[game-engine]: https://github.com/OinkIguana/game-engine
 
-# RPG Engine (WIP)
+# RPG Engine (discontinued)
+
+Note: This engine (and room editor) are no longer in development. Instead, I have
+      started a new [game-engine] project, which I plan to make less complicated and
+      someday port to my favourite languages.
 
 An engine for making RPG games in C++ using SDL 2.0.
 
